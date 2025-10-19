@@ -1,119 +1,173 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[11pt,a4paper]{article}
 
-% ===== Encoding & Language =====
+% --- Encoding & Sprache ---
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
 \usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
-\usepackage[tracking=true,final]{microtype}
-\usepackage{needspace}
 
-% ===== Layout =====
-\usepackage{geometry}
-\geometry{margin=1in}
-\raggedbottom
-\usepackage{parskip}
+% --- Layout & Typografie ---
+\usepackage[a4paper,margin=1.5cm]{geometry} % Schmaler Rand
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{hyperref}
 \usepackage{graphicx}
-\graphicspath{{./}{./images/}}
-\usepackage[font=small,labelfont=bf]{caption}
-\usepackage{float}
-
-% ===== Header / Footer =====
+\usepackage{array}
+\usepackage{booktabs}
 \usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-% >>> EDIT THESE TWO LINES FOR EACH PROTOCOL <<<
-\fancyhead[L]{Kursname – Aufgabentitel}
-\fancyfoot[C]{Autor:innen – Seite \thepage}
-\setlength{\headheight}{14pt}
+\usepackage{xcolor}
+\usepackage{csquotes}
 
-% ===== Links & PDF meta =====
-\usepackage[hidelinks]{hyperref}
+% --- Hyperref Setup ---
 \hypersetup{
-  pdftitle={PROTOKOLL – <Thema/Titel>},
-  pdfauthor={<Autor:innen>},
-  pdfsubject={<Kurs/Lehrveranstaltung>},
-  pdfcreator={LaTeX}
+  pdftitle={HopIn Temporäre Event-Gruppen (HCD A5A)},
+  pdfauthor={Kevin Forter, Benjamin Feichtlbauer},
+  pdfsubject={Prototyp-Dokumentation},
+  pdfkeywords={HCD, Prototyp, Event-Organisation, temporäre Gruppen},
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  citecolor=black
 }
 
-% ===== Quick macros for repeating patterns =====
-\newcommand{\pos}{\textbf{Positiv:} }
-\newcommand{\negx}{\textbf{Negativ:} }
-\newcommand{\impr}{\textbf{Verbesserungsvorschlag:} }
+% --- Header / Footer ---
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Studiengang: HCD}
+\chead{HopIn Prototyp}
+\rhead{Assignment: A5A}
+\lfoot{Kevin Forter \& Benjamin Feichtlbauer}
+\rfoot{\thepage}
 
-% Optional: compact itemize
-\usepackage{enumitem}
-\setlist{itemsep=2pt,topsep=4pt}
+% --- Absätze & Listen ---
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+\setlist[itemize]{leftmargin=1.2em}
+\setlist[enumerate]{leftmargin=1.4em}
+
+% --- Nützliche Makros ---
+\newcommand{\appname}{\textbf{HopIn}}
 
 \begin{document}
 
-% ===================== TITELBLATT =====================
+% --- Titelseite ---
 \begin{titlepage}
   \centering
-  \vspace*{2cm}
-  {\Huge Protokoll – \textit{<Kursname>} \par}
-  \vspace{0.6cm}
-  {\Large \textbf{<Aufgabe/Thema>} \par}
-  \vspace{1.6cm}
-  {\large <Autor:innen> \par}
-  {\large <Studiengang / Semester> \par}
-  {\large Lehrveranstaltung: <Kursname> \par}
-  {\large \today\par}
+  {\Large Human-Centered Design (HCD)}\\[2ex]
+  {\large Assignment A5A}\\[10ex]
+  {\huge \textbf{HopIn}: Temporäre Event-Gruppen}\\[3ex]
+  {\large Prototyp Zielsetzung, Personas und Dokumentation}\\[8ex]
+
+  \begin{tabular}{@{}p{4cm}p{9cm}@{}}
+    \textbf{Studiengang:} & HCD \\
+    \textbf{Kurs / Studierende:} & Kevin Forter \& Benjamin Feichtlbauer \\
+  \end{tabular}
+
+  \vfill
 \end{titlepage}
 
-% ===================== EINLEITUNG =====================
-\section*{Einleitung}
-Kurz das Ziel, den Kontext und den Umfang dieser Übung/Analyse beschreiben.
-Was wird untersucht, welche Methode wird genutzt, und was ist das erwartete Ergebnis?
+\section*{Projektidee}
+\appname{} ist eine mobile App (bzw.\ Web-App), mit der Nutzer temporäre Gruppen für Events erstellen können, zum Beispiel für Partys, Ausflüge, Sporttreffen oder Uni-Projekte.
+Im Gegensatz zu klassischen Messenger-Gruppen wie WhatsApp, die nach dem Event bestehen bleiben, werden Gruppen bei \appname{} automatisch archiviert, sobald das Event endet.
+So bleibt der Kommunikationsbereich aufgeräumt, übersichtlich und fokussiert auf das Wesentliche: gemeinsam planen, durchführen und abschließen.
 
-% ===================== HAUPTTEIL =====================
-\section*{Aufgaben / Experimente / Kriterien}
-% Duplikatfähiger Block – kopieren für jede Teilaufgabe/Heuristik/Experiment
-\subsection*{1. <Teilabschnitt / Kriterium / Aufgabe>}
-\pos Kurzer Satz zu einer Stärke oder gutem Befund. \\
-\negx Kurzer Satz zu einer Schwäche oder einem Problem. \\
-\impr Konkreter, umsetzbarer Vorschlag.
+\section*{Zielsetzung}
+Das Ziel von \appname{} ist es, die kurzfristige Event-Organisation zu vereinfachen und gleichzeitig digitale Ordnung zu fördern.
+Nutzer sollen schnell Gruppen erstellen, andere einfach einladen (per Link oder QR-Code) und alle relevanten Informationen wie Chat, To-Dos und Umfragen an einem Ort bündeln können.
+Nach Ende des Events verschwindet die Gruppe automatisch aus der aktiven Ansicht, bleibt aber im Archiv zur Einsicht erhalten.
 
-% Beispielbild (optional)
-\begin{figure}[H]
-  \centering
-\IfFileExists{images/example.png}{\includegraphics[width=0.75\textwidth]{images/example.png}}{\fbox{\parbox[c][0.25\textheight][c]{0.75\textwidth}{\centering\small (placeholder: images/example.png not found)}}}
-  \caption{Sprechende Bildunterschrift (Was zeigt das Bild? Warum ist es relevant?)}
-\end{figure}
+\section*{Zielgruppe und Ziele des Prototyps (Use Cases)}
+\textbf{Zielgruppe:} Personen, die häufig spontane oder kurzfristig planbare Anlässe organisieren (Studierende, Berufstätige, Elternvertretungen) und dabei klare, temporäre Kommunikationsräume bevorzugen.
 
-\Needspace{0.5\textheight}
-\subsection*{2. <Weiteres Kriterium / Aufgabe>}
-\pos ...
-\negx ...
-\impr ...
-
-% Falls du Heuristiken (à la Nielsen) nutzt, ersetze die Untertitel durch „1. Sichtbarkeit ...“, etc.
-% Für technische Übungen (Cloud/DevOps) nutze je Abschnitt: Ziel → Schritte → Ergebnis → Screenshots → Stolpersteine.
-
-% ----- Beispiel für technischen Abschnitt -----
-\section*{Exercise <Nr.> – <Kurztitel>}
-\subsection*{Ziel}
-1–2 Sätze: Was soll erreicht werden?
-
-\subsection*{Vorgehen (Kurzprotokoll)}
-\begin{enumerate}
-  \item Schritt 1 (Kommando, AWS/CLI/Tool, UI-Pfad)
-  \item Schritt 2 (wichtige Parameter, Varianten)
-  \item Schritt 3 (Validierung/Check)
-\end{enumerate}
-
-\subsection*{Ergebnis / Nachweis}
-Stichpunkte + ggf. Link/Screenshot (z. B. EC2 Details, Security Group Inbound, Browser Hello-World).
-
-\subsection*{Probleme \& Lösungen (Lessons Learned)}
+\textbf{Ziele des Prototyps:}
 \begin{itemize}
-  \item Problem: \textit{Symptom}. Lösung: \textit{Fix/Workaround}.
-  \item …
+  \item Schnelle Erstellung temporärer Event-Gruppen mit Titel, Datum/Uhrzeit und optionalen Rollen.
+  \item Reibungsloses Einladen via Link oder QR-Code ohne Nummernspeicherung.
+  \item Bündelung relevanter Funktionen: Chat, To-Dos (wer bringt was?), Umfragen (Termin/Ort) und Dateien.
+  \item Automatisches Archivieren der Gruppe nach Event-Ende, weiterhin lesender Zugriff im Archiv.
+  \item Übersicht über bevorstehende, laufende und archivierte Events.
 \end{itemize}
 
-% ===================== FAZIT =====================
-\section*{Fazit}
-2–4 Sätze: Wichtigste Erkenntnisse, was gut funktionierte, was verbessert werden kann,
-und evtl. Ausblick auf nächste Übung/Iteration.
+\section*{Persona 1: Lisa Sommer (21) Studentin}
+\textbf{Beschreibung:} Lisa studiert Medienwissenschaften, wohnt in einer WG und organisiert oft spontane WG-Partys oder kleine Geburtstagsrunden. Sie hasst es, ständig neue WhatsApp-Gruppen zu erstellen, die danach nie wieder genutzt werden.
+
+\textbf{Ziele:}
+\begin{itemize}
+  \item Events unkompliziert planen
+  \item Leute einfach einladen (ohne Nummern zu speichern)
+  \item Ordnung in ihren Kommunikations-Apps behalten
+\end{itemize}
+
+\textbf{Pain Points:}
+\begin{itemize}
+  \item Unübersichtliche WhatsApp-Gruppen
+  \item Alte Gruppen bleiben bestehen
+  \item Planungstools sind oft zu kompliziert
+\end{itemize}
+
+\textbf{User Story:}
+\begin{quote}
+Als Studentin möchte ich für meine WG-Party schnell eine temporäre Gruppe erstellen können, damit ich alle Gäste koordinieren kann und die Gruppe sich nach der Party automatisch archiviert, damit mein Chat wieder sauber bleibt.
+\end{quote}
+
+\section*{Persona 2: Jonas Keller (28) Berufstätiger}
+\textbf{Beschreibung:} Jonas ist Softwareentwickler und organisiert regelmäßig Wochenend-Aktivitäten mit Freunden, zum Beispiel Fußballspiele oder Grillabende. Er möchte die Organisation schlank und effizient halten, ohne dauerhafte Gruppen oder zu viel Chat-Spam.
+
+\textbf{Ziele:}
+\begin{itemize}
+  \item Spontane Gruppen einfach erstellen
+  \item Übersicht über bevorstehende Events
+  \item Klare Trennung zwischen Arbeit und Freizeit
+\end{itemize}
+
+\textbf{Pain Points:}
+\begin{itemize}
+  \item Zu viele aktive Gruppenchats
+  \item Schwer, alles im Blick zu behalten
+  \item Kein einfaches Tool für kurzfristige Planung
+\end{itemize}
+
+\textbf{User Story:}
+\begin{quote}
+Als Berufstätiger möchte ich temporäre Gruppen für Freizeitaktivitäten erstellen können, um Termine und Aufgaben (zum Beispiel wer bringt was mit?) zu organisieren und danach automatisch alles ins Archiv verschieben lassen, damit ich nicht alles manuell löschen muss.
+\end{quote}
+
+\section*{Persona 3: Sarah Baumann (35) Mutter und Elternbeirätin}
+\textbf{Beschreibung:} Sarah koordiniert Schulaktivitäten, Ausflüge und Elternabende. Sie nutzt WhatsApp-Gruppen, aber es wird schnell chaotisch, wenn für jedes Event eine neue Gruppe bleibt.
+
+\textbf{Ziele:}
+\begin{itemize}
+  \item Übersicht über vergangene und kommende Schul-Events
+  \item Einfache Kommunikation mit anderen Eltern
+  \item Strukturiertes Planen ohne Informationsverlust
+\end{itemize}
+
+\textbf{Pain Points:}
+\begin{itemize}
+  \item Alte Gruppen bleiben bestehen
+  \item Teilnehmer vergessen, Gruppen zu verlassen
+  \item Zu viele Chats ohne klare Struktur
+\end{itemize}
+
+\textbf{User Story:}
+\begin{quote}
+Als Elternbeirätin möchte ich für jedes Schulfest eine temporäre Gruppe erstellen können, damit ich Einladungen, Aufgaben und Infos teilen kann und nach dem Event die Gruppe automatisch archiviert wird, um Ordnung zu behalten.
+\end{quote}
+
+\section*{Dokumentation des Prototyps}
+\subsection*{Beschreibung}
+Der vorliegende Klick- und UI-Prototyp demonstriert den Kernfluss:
+\begin{enumerate}
+  \item Event anlegen: Titel, Datum/Zeit, Ort, Beschreibung.
+  \item Einladen: Link oder QR-Code generieren, Gastbeitritt ohne Kontaktspeicherung.
+  \item Koordination: Chat, To-Do-Liste (Wer bringt was?), Umfragen (Termin/Ort) und Dateien.
+  \item Abschluss: Automatisches Archivieren nach Event-Ende, lesender Zugriff im Archiv.
+\end{enumerate}
+
+\subsection*{Link (mit Bearbeitungszugriff)}
+\textbf{Prototyp-URL:}  
+\url{https://www.figma.com/file/Dmgm18zgv7DBHrGzGCSv53?node-id=3:3&locale=de&type=design}
+
+\vfill
+\textit{Erstellt von:} Kevin Forter \& Benjamin Feichtlbauer
 
 \end{document}
