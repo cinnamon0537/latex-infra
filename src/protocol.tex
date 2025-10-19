@@ -1,0 +1,119 @@
+\documentclass[a4paper,12pt]{article}
+
+% ===== Encoding & Language =====
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[tracking=true,final]{microtype}
+\usepackage{needspace}
+
+% ===== Layout =====
+\usepackage{geometry}
+\geometry{margin=1in}
+\raggedbottom
+\usepackage{parskip}
+\usepackage{graphicx}
+\graphicspath{{./}{./images/}}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{float}
+
+% ===== Header / Footer =====
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+% >>> EDIT THESE TWO LINES FOR EACH PROTOCOL <<<
+\fancyhead[L]{Kursname – Aufgabentitel}
+\fancyfoot[C]{Autor:innen – Seite \thepage}
+\setlength{\headheight}{14pt}
+
+% ===== Links & PDF meta =====
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+  pdftitle={PROTOKOLL – <Thema/Titel>},
+  pdfauthor={<Autor:innen>},
+  pdfsubject={<Kurs/Lehrveranstaltung>},
+  pdfcreator={LaTeX}
+}
+
+% ===== Quick macros for repeating patterns =====
+\newcommand{\pos}{\textbf{Positiv:} }
+\newcommand{\negx}{\textbf{Negativ:} }
+\newcommand{\impr}{\textbf{Verbesserungsvorschlag:} }
+
+% Optional: compact itemize
+\usepackage{enumitem}
+\setlist{itemsep=2pt,topsep=4pt}
+
+\begin{document}
+
+% ===================== TITELBLATT =====================
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+  {\Huge Protokoll – \textit{<Kursname>} \par}
+  \vspace{0.6cm}
+  {\Large \textbf{<Aufgabe/Thema>} \par}
+  \vspace{1.6cm}
+  {\large <Autor:innen> \par}
+  {\large <Studiengang / Semester> \par}
+  {\large Lehrveranstaltung: <Kursname> \par}
+  {\large \today\par}
+\end{titlepage}
+
+% ===================== EINLEITUNG =====================
+\section*{Einleitung}
+Kurz das Ziel, den Kontext und den Umfang dieser Übung/Analyse beschreiben.
+Was wird untersucht, welche Methode wird genutzt, und was ist das erwartete Ergebnis?
+
+% ===================== HAUPTTEIL =====================
+\section*{Aufgaben / Experimente / Kriterien}
+% Duplikatfähiger Block – kopieren für jede Teilaufgabe/Heuristik/Experiment
+\subsection*{1. <Teilabschnitt / Kriterium / Aufgabe>}
+\pos Kurzer Satz zu einer Stärke oder gutem Befund. \\
+\negx Kurzer Satz zu einer Schwäche oder einem Problem. \\
+\impr Konkreter, umsetzbarer Vorschlag.
+
+% Beispielbild (optional)
+\begin{figure}[H]
+  \centering
+\IfFileExists{images/example.png}{\includegraphics[width=0.75\textwidth]{images/example.png}}{\fbox{\parbox[c][0.25\textheight][c]{0.75\textwidth}{\centering\small (placeholder: images/example.png not found)}}}
+  \caption{Sprechende Bildunterschrift (Was zeigt das Bild? Warum ist es relevant?)}
+\end{figure}
+
+\Needspace{0.5\textheight}
+\subsection*{2. <Weiteres Kriterium / Aufgabe>}
+\pos ...
+\negx ...
+\impr ...
+
+% Falls du Heuristiken (à la Nielsen) nutzt, ersetze die Untertitel durch „1. Sichtbarkeit ...“, etc.
+% Für technische Übungen (Cloud/DevOps) nutze je Abschnitt: Ziel → Schritte → Ergebnis → Screenshots → Stolpersteine.
+
+% ----- Beispiel für technischen Abschnitt -----
+\section*{Exercise <Nr.> – <Kurztitel>}
+\subsection*{Ziel}
+1–2 Sätze: Was soll erreicht werden?
+
+\subsection*{Vorgehen (Kurzprotokoll)}
+\begin{enumerate}
+  \item Schritt 1 (Kommando, AWS/CLI/Tool, UI-Pfad)
+  \item Schritt 2 (wichtige Parameter, Varianten)
+  \item Schritt 3 (Validierung/Check)
+\end{enumerate}
+
+\subsection*{Ergebnis / Nachweis}
+Stichpunkte + ggf. Link/Screenshot (z. B. EC2 Details, Security Group Inbound, Browser Hello-World).
+
+\subsection*{Probleme \& Lösungen (Lessons Learned)}
+\begin{itemize}
+  \item Problem: \textit{Symptom}. Lösung: \textit{Fix/Workaround}.
+  \item …
+\end{itemize}
+
+% ===================== FAZIT =====================
+\section*{Fazit}
+2–4 Sätze: Wichtigste Erkenntnisse, was gut funktionierte, was verbessert werden kann,
+und evtl. Ausblick auf nächste Übung/Iteration.
+
+\end{document}

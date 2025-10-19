@@ -1,0 +1,26 @@
+name: Build PDF
+permissions:
+  contents: write
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: src/protocol.tex
+
+      - name: Force commit PDF
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add -f protocol.pdf
+          git commit -m "build: pdf [skip ci]" || exit 0
+          git push
