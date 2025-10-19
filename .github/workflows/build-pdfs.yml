@@ -1,0 +1,52 @@
+name: Build LaTeX PDFs
+permissions:
+  contents: write
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.tex'
+      - '**/images/**'
+      - '.github/workflows/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Determine changed .tex files
+        id: changed
+        run: |
+          # Compute which .tex files have changed in this push compared to the previous commit
+          CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- '*.tex' || true)
+          # Normalize to newline-separated list for latex-action
+          if [ -n "$CHANGED" ]; then
+            echo "files=$(echo "$CHANGED" | tr ' ' '\n')" >> "$GITHUB_OUTPUT"
+          else
+            echo "files=" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Compile changed LaTeX
+        if: ${{ steps.changed.outputs.files != '' }}
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: ${{ steps.changed.outputs.files }}
+          work_in_root_file_dir: true
+      - name: Commit PDFs
+        if: ${{ steps.changed.outputs.files != '' }}
+        run: |
+          set -e
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          # Loop through each changed .tex file and add its PDF
+          echo "${{ steps.changed.outputs.files }}" | while read -r file; do
+            [ -z "$file" ] && continue
+            pdf="${file%.tex}.pdf"
+            if [ -f "$pdf" ]; then
+              git add -f "$pdf"
+            fi
+          done
+          git commit -m "build: update PDFs [skip ci]" || exit 0
+          git push
