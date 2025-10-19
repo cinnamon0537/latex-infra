@@ -11,6 +11,8 @@
 \usepackage{enumitem}
 \usepackage{hyperref}
 \usepackage{graphicx}
+% Legt Suchpfade für Bilder fest (damit Bilddateien im lokalen Verzeichnis sowie im Unterordner "images" gefunden werden)
+\graphicspath{{.}{./images/}}
 \usepackage{array}
 \usepackage{booktabs}
 \usepackage{fancyhdr}
@@ -30,13 +32,15 @@
 }
 
 % --- Header / Footer ---
+\usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\lhead{Studiengang: HCD}
-\chead{HopIn Prototyp}
-\rhead{Assignment: A5A}
-\lfoot{Kevin Forter \& Benjamin Feichtlbauer}
-\rfoot{\thepage}
+\fancyhead[L]{Bachelor Informatik}
+\fancyhead[C]{Human Centered Design}
+\fancyhead[R]{Aufgabe~5}
+\fancyfoot[C]{Feichtlbauer, Forter\,–\,Seite~\thepage}
+\setlength{\headheight}{15pt}
+
 
 % --- Absätze & Listen ---
 \setlength{\parskip}{6pt}
@@ -52,17 +56,15 @@
 % --- Titelseite ---
 \begin{titlepage}
   \centering
-  {\Large Human-Centered Design (HCD)}\\[2ex]
-  {\large Assignment A5A}\\[10ex]
-  {\huge \textbf{HopIn}: Temporäre Event-Gruppen}\\[3ex]
-  {\large Prototyp Zielsetzung, Personas und Dokumentation}\\[8ex]
-
-  \begin{tabular}{@{}p{4cm}p{9cm}@{}}
-    \textbf{Studiengang:} & HCD \\
-    \textbf{Kurs / Studierende:} & Kevin Forter \& Benjamin Feichtlbauer \\
-  \end{tabular}
-
-  \vfill
+  \vspace*{2cm}
+  {\Huge Prototyping – HCD Aufgabe 5\par}
+  \vspace{0.8cm}
+  {\Large Prototyping Report\par}
+  \vspace{2.0cm}
+  {\large Benjamin~Feichtlbauer\\Kevin~Forter\par}
+  {\large Bachelor Informatik / Computer Science\par}
+  {\large Lehrveranstaltung: Human Centered Design\par}
+  {\large \today\par}
 \end{titlepage}
 
 \section*{Projektidee}
@@ -154,20 +156,103 @@ Als Elternbeirätin möchte ich für jedes Schulfest eine temporäre Gruppe erst
 \end{quote}
 
 \section*{Dokumentation des Prototyps}
-\subsection*{Beschreibung}
-Der vorliegende Klick- und UI-Prototyp demonstriert den Kernfluss:
-\begin{enumerate}
-  \item Event anlegen: Titel, Datum/Zeit, Ort, Beschreibung.
-  \item Einladen: Link oder QR-Code generieren, Gastbeitritt ohne Kontaktspeicherung.
-  \item Koordination: Chat, To-Do-Liste (Wer bringt was?), Umfragen (Termin/Ort) und Dateien.
-  \item Abschluss: Automatisches Archivieren nach Event-Ende, lesender Zugriff im Archiv.
-\end{enumerate}
+
+Dieser Abschnitt beschreibt den interaktiven Prototyp, die exemplarischen Anwendungsszenarien sowie die zentralen Bildschirme. Die Abbildungen stammen aus dem Figma‑Prototyp und befinden sich im gleichen Ordner wie diese Datei.
+
+\subsection*{Use Cases und Navigationsfluss}
+Der Prototyp unterstützt drei wesentliche Nutzungsfälle:
+\begin{itemize}
+  \item \textbf{UC1 – Event anlegen:} Über den Profil‑Screen kann ein neues Event mit Name, Ort, Beginn und Ende erstellt werden (Abb.~\ref{fig:create}). Nach dem Speichern erscheint das Event in der Übersicht und ist für eingeladene Personen sichtbar.
+  \item \textbf{UC2 – Gäste einladen:} Im Event‑Detail lässt sich über den Share‑Button ein QR‑Code sowie ein sechsstelliger Zahlencode generieren (Abb.~\ref{fig:share}). Gäste können so dem Event beitreten, ohne ihre Kontaktdaten freizugeben.
+  \item \textbf{UC3 – Medien sammeln und archivieren:} Während der Veranstaltung können Fotos im Album (Abb.~\ref{fig:album}) geteilt werden. Nach Ablauf des Events wird es automatisch in die Archiv‑Ansicht verschoben (Abb.~\ref{fig:archive}) und bleibt dort lesbar.
+\end{itemize}
+
+Der Navigationsfluss ist bewusst einfach gehalten: Nach dem \textbf{Login} (Abb.~\ref{fig:login}) landet der Nutzer auf der \textbf{Home}‑Seite (Abb.~\ref{fig:home}) mit einer Liste aller bevorstehenden Veranstaltungen. Eine Tab‑Bar ermöglicht jederzeit den Wechsel zum \emph{Archive} (Abb.~\ref{fig:archive}) oder zum \emph{Profile} (Abb.~\ref{fig:profile}). Ein Tap auf eine Event‑Karte in der Home‑Ansicht öffnet das \textbf{Event‑Detail} (Abb.~\ref{fig:eventinfo}); von dort führen Buttons zum Einladen (QR‑Ticket) und zum Album. Neue Events werden über den Profil‑Screen angelegt.
+
+\subsection*{Bildschirmübersicht}
+
+\paragraph{Login / Sign‑Up}\mbox{}\\
+Der Einstiegspunkt für alle Nutzer (Abb.~\ref{fig:login}): Neben E‑Mail/Passwort‑Felder gibt es Social‑Login‑Optionen. Ein freundlicher Begrüßungstext motiviert zur Nutzung der App.
+
+\paragraph{Home / Upcoming Events}\mbox{}\\
+Diese Startseite (Abb.~\ref{fig:home}) listet alle bevorstehenden Events. Das nächste Event wird farbig hervorgehoben und zeigt Titel, Ort, Countdown sowie kleine Avatare der bereits zugesagten Gäste. Weitere Events erscheinen als Karten darunter mit Datum, Ort und Organisator.
+
+\paragraph{Archive}\mbox{}\\
+In der Archiv‑Ansicht (Abb.~\ref{fig:archive}) werden vergangene Veranstaltungen nach Jahren gruppiert dargestellt. So können Nutzer vergangene Events noch einmal durchsehen, ohne ihre aktuelle Übersicht zu verlieren.
+
+\paragraph{Profil}\mbox{}\\
+Der Profil‑Screen (Abb.~\ref{fig:profile}) zeigt den Avatar, den Namen und den Benutzernamen des Nutzers. Zwei interaktive Bereiche erlauben das Anlegen eines neuen Events (\emph{Create Event}) sowie den Zugriff auf eigene Veranstaltungen (\emph{Your Events}).
+
+\paragraph{Event‑Detail}\mbox{}\\
+In der Detailansicht (Abb.~\ref{fig:eventinfo}) werden das Titelbild, der Name, der Ort, das Datum und der Veranstalter des Events präsentiert. Die Gästeliste wird durch farbcodierte Buttons dargestellt, die zwischen offenen Einladungen, Absagen und Zusagen unterscheiden. Unterhalb befindet sich eine Bildvorschau und ein Button zum Öffnen des Albums. Der Share‑Button generiert ein QR‑Ticket zum Einladen.
+
+\paragraph{QR‑Einladung}\mbox{}\\
+Das Share‑Overlay (Abb.~\ref{fig:share}) erinnert an eine Eintrittskarte: Es zeigt einen QR‑Code und einen Zahlencode. Start- und Endzeit des Events werden ebenfalls angezeigt, sodass Gäste den Kontext kennen.
+
+\paragraph{Album}\mbox{}\\
+In der Album‑Ansicht (Abb.~\ref{fig:album}) können alle während eines Events geteilten Bilder in einem Raster angesehen werden. Nutzerinnen und Nutzer können durch die Bilder scrollen und neue Fotos hinzufügen.
+
+\paragraph{Event anlegen}\mbox{}\\
+Über die Eingabemaske \emph{Create Event} (Abb.~\ref{fig:create}) werden Name und Ort des Events sowie Start- und Endzeit definiert. Eine Umschaltoption aktiviert bei Bedarf die Chat‑Funktion. Nach Bestätigung erscheint das Event in der Home‑Ansicht.
+
+\subsection*{Abbildungen}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image-2.png}
+  \caption{Login‑ und Sign‑Up‑Screen mit E‑Mail/Passwort‑Eingabe sowie Social‑Login‑Optionen.}
+  \label{fig:login}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image-3.png}
+  \caption{Home‑Ansicht: anstehende Events mit hervorgehobener nächster Veranstaltung und weiteren Karten.}
+  \label{fig:home}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image-4.png}
+  \caption{Archiv‑Ansicht: vergangene Veranstaltungen gruppiert nach Jahr.}
+  \label{fig:archive}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image-5.png}
+  \caption{Profil‑Screen: Avatar, Name, Benutzername sowie Optionen zum Erstellen und Verwalten eigener Events.}
+  \label{fig:profile}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image-6.png}
+  \caption{Event‑Detail: Titelbild, Eckdaten, Gästeliste und Vorschau des Albums. Über den \emph{Share}-Button lässt sich ein QR‑Ticket erzeugen.}
+  \label{fig:eventinfo}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image-7.png}
+  \caption{QR‑Einladung: Ticket mit QR‑Code und Zahlencode für den schnellen Beitritt zum Event.}
+  \label{fig:share}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image-8.png}
+  \caption{Album‑Ansicht: Rasterdarstellung der während des Events geteilten Bilder.}
+  \label{fig:album}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image-9.png}
+  \caption{Formular zur Event‑Erstellung: Eingabefelder für Name, Ort, Start- und Endzeit sowie Umschalter für die Chat‑Funktion.}
+  \label{fig:create}
+\end{figure}
 
 \subsection*{Link (mit Bearbeitungszugriff)}
-\textbf{Prototyp-URL:}  
-\url{https://www.figma.com/file/Dmgm18zgv7DBHrGzGCSv53?node-id=3:3&locale=de&type=design}
-
-\vfill
-\textit{Erstellt von:} Kevin Forter \& Benjamin Feichtlbauer
-
+\textbf{Prototyp‑URL:} \url{https://www.figma.com/file/Dmgm18zgv7DBHrGzGCSv53?node-id=3:3&locale=de&type=design}
 \end{document}
