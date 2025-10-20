@@ -1,36 +1,70 @@
-# LaTeX Protocol Template
+# LaTeX Protocol Automation
 
-Automated LaTeX workflow - write in `.tex`, get a PDF URL automatically.
+Automated LaTeX workflow — write in `.tex`, get a compiled `.pdf` in the same folder automatically.
 
 ## 🚀 What This Does
 
-1. You edit `src/protocol.tex`
-2. GitHub automatically builds it to PDF
-3. PDF is available at a permanent URL
+1. You create or edit `.tex` files anywhere under `src/`, for example:
+   ```
+   src/hcd/exercise-5/protocol.tex
+   ```
+2. GitHub Actions detects changes to `.tex` files on every push to `main`.
+3. Only changed `.tex` files are recompiled to `.pdf` using LaTeX.
+4. The resulting `.pdf` is placed **in the same directory** as the source `.tex`.
+5. All build artifacts (including PDFs) are ignored in git — they are never committed manually.
+
+---
 
 ## 📄 Access PDF
 
-**[View Latest PDF](./protocol.pdf)**
+Each `.tex` file produces a `.pdf` with the same name inside its own directory, e.g.:
 
-After forking, this same link works in your repo.
+```
+src/hcd/exercise-5/
+ ├── protocol.tex
+ └── protocol.pdf
+```
 
-## 📁 Files
+---
 
-- `src/protocol.tex` - Your content (edit this)
-- `.github/workflows/build-pdf.yml` - Auto-build config
-- `.gitignore` - Prevents PDF conflicts
-- `protocol.pdf` - **Auto-deployed** (not in git)
+## 📁 Files & Structure
 
-## 🛠️ Setup
+```
+src/
+ ├── hcd/
+ │    └── exercise-5/
+ │         ├── protocol.tex
+ │         ├── images/
+ │         │    └── example.png
+ │         └── protocol.pdf (generated automatically)
+ ├── another-course/
+ │    └── exercise-1/protocol.tex
+```
 
-1. **Fork this repo**
-2. **Enable Pages**: Settings → Pages → GitHub Actions → Save
-3. **Edit** `src/protocol.tex` 
-4. **Commit & push** - PDF builds automatically in ~2 min
-5. **Share**: `https://YOURNAME.github.io/REPO/protocol.pdf`
+- `.github/workflows/build-pdfs.yml` — CI workflow for auto-building PDFs  
+- `.gitignore` — ignores all `.pdf`, `.log`, and other LaTeX artifacts  
+- `src/**/` — contains course folders, exercises, and their `.tex` sources  
+
+---
 
 ## 🔧 Local Test
 
+To compile a single exercise locally:
+
 ```bash
-cd src
-pdflatex protocol.tex  # Generates PDF locally
+cd src/hcd/exercise-5
+pdflatex protocol.tex
+```
+
+To compile everything recursively (all `.tex` files under `src/`):
+
+```bash
+find src -name "*.tex" -exec pdflatex {} \;
+```
+
+---
+
+## 💡 Notes
+
+- PDFs are **never committed manually** — the CI workflow handles all builds.  
+- The setup scales naturally across multiple courses and semesters.
