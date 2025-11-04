@@ -1,0 +1,193 @@
+\documentclass[a4paper,12pt]{article}
+
+% ===== Encoding & Language =====
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[tracking=true,final]{microtype}
+\usepackage{needspace}
+
+% ===== Layout =====
+\usepackage{geometry}
+\geometry{margin=1in}
+\raggedbottom
+\usepackage{parskip}
+\usepackage{graphicx}
+% Allow graphics to be loaded from the current directory or from the assets folder
+\graphicspath{{./}{./assets/}}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{float}
+
+% ===== Header / Footer =====
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+% Adjust these lines according to your course and exercise
+\fancyhead[L]{Technikum Wien – Docker Exercise~2}
+\fancyfoot[C]{Autor – Seite \thepage}
+\setlength{\headheight}{14pt}
+
+% ===== Links & PDF meta =====
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+  pdftitle={PROTOKOLL – Docker Exercise 2},
+  pdfauthor={Vorname Nachname},
+  pdfsubject={Technikum Wien},
+  pdfcreator={LaTeX}
+}
+
+% ===== Quick macros (unused here) =====
+\newcommand{\pos}{\textbf{Positiv:} }
+\newcommand{\negx}{\textbf{Negativ:} }
+\newcommand{\impr}{\textbf{Verbesserungsvorschlag:} }
+
+% Optional: compact itemize
+\usepackage{enumitem}
+\setlist{itemsep=2pt,topsep=4pt}
+
+\begin{document}
+
+% ===================== TITELBLATT =====================
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+  {\Huge Protokoll – \textit{Docker Exercise~2} \par}
+  \vspace{0.6cm}
+  {\Large \textbf{Familiarize with Docker} \par}
+  \vspace{1.6cm}
+  {\large Vorname Nachname \par}
+  {\large Studiengang / Semester \par}
+  {\large Lehrveranstaltung: Technikum Wien \par}
+  {\large \today\par}
+\end{titlepage}
+
+% ===================== EINLEITUNG =====================
+\section*{Einleitung}
+Diese Übung dient dazu, grundlegende Docker-Kenntnisse zu festigen. Im ersten Teil wird der Umgang mit der \texttt{docker}-CLI geübt: Images werden heruntergeladen, Container gestartet und gestoppt, Logs betrachtet und Volumes genutzt. Im zweiten Teil wird eine kleine Node.js‑Anwendung mithilfe einer Dockerfile containerisiert, als Image gebaut und anschließend als Container ausgeführt. Ziel ist es, ein lauffähiges „Hello World“ im Browser zu sehen.
+
+% ===================== EXERCISE 1 =====================
+\section*{Exercise 1 – Docker CLI}
+
+\subsection*{Ziel}
+Es sollen grundlegende Docker-Kommandos zum Arbeiten mit Images und Containern erprobt werden. Dazu gehören das Herunterladen von Images, das Starten und Stoppen von Containern, das Anzeigen von Logs sowie das Anlegen und Nutzen eines Volumes.
+
+\subsection*{Vorgehen (Kurzprotokoll)}
+\begin{enumerate}
+  \item Mit \texttt{docker pull redis:latest} wurde das aktuelle Redis‑Image aus Docker Hub heruntergeladen (Abbildung~\ref{fig:pull-latest}).
+  \item Anschließend wurde mit \texttt{docker pull redis:6} die Version 6 des Redis‑Images geladen (Abbildung~\ref{fig:pull-v6}).
+  \item Aus beiden Images wurden Container im Hintergrund gestartet:\\
+  \texttt{docker run -d --name redis-latest redis:latest} sowie \texttt{docker run -d --name redis-6 redis:6}. Danach zeigte \texttt{docker ps} die beiden laufenden Container an (Abbildung~\ref{fig:run-containers}).
+  \item Der Container \texttt{redis-6} wurde gestoppt: \texttt{docker stop redis-6} (Abbildung~\ref{fig:stop-container}).
+  \item Mit \texttt{docker logs -f redis-latest} wurden die Logs des verbleibenden Containers angezeigt (Abbildung~\ref{fig:logs-latest}).
+  \item Im Anschluss wurden beide Container entfernt sowie das Image \texttt{redis:6} gelöscht. Dafür kamen \texttt{docker rm -f redis-latest redis-6} und \texttt{docker rmi redis:6} zum Einsatz (Abbildung~\ref{fig:remove-containers}).
+  \item Ein Volume namens \texttt{demo-volume} wurde erstellt: \texttt{docker volume create demo-volume} (Abbildung~\ref{fig:create-volume}).
+  \item Abschließend wurde ein neuer Redis‑Container mit dem erstellten Volume und einem Port‑Mapping gestartet:\\
+  \texttt{docker run -d --name redis-demo -v demo-volume:/demo-volume -p 1234:6001 redis:latest redis-server --port 6001} (Abbildung~\ref{fig:start-demo}).
+\end{enumerate}
+
+\subsection*{Ergebnis / Nachweis}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{image1.png}
+  \caption{Download des aktuellen Redis‑Images mit \texttt{docker pull redis:latest}.\label{fig:pull-latest}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{image2.png}
+  \caption{Download des Redis‑Images in Version 6 mit \texttt{docker pull redis:6}.\label{fig:pull-v6}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{image3.png}
+  \caption{Starten der beiden Container aus den heruntergeladenen Images und Anzeige mit \texttt{docker ps}.\label{fig:run-containers}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{image4.png}
+  \caption{Stoppen des Containers \texttt{redis-6}.\label{fig:stop-container}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{image5.png}
+  \caption{Anzeige der Logs des noch laufenden Containers \texttt{redis-latest}.\label{fig:logs-latest}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{image6.png}
+  \caption{Entfernen der Container und des Images \texttt{redis:6}.\label{fig:remove-containers}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image7.png}
+  \caption{Erstellen des Docker‑Volumes \texttt{demo-volume}.\label{fig:create-volume}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{image8.png}
+  \caption{Start des neuen Redis‑Containers mit eingebundenem Volume und Port‑Weiterleitung.\label{fig:start-demo}}
+\end{figure}
+
+\subsection*{Probleme \& Lösungen (Lessons Learned)}
+\begin{itemize}
+  \item Alle Schritte ließen sich ohne Schwierigkeiten durchführen; die Dokumentation der Docker‑CLI erwies sich als hilfreich.
+  \item Die Verwendung des Flags \texttt{-d} startet Container im Hintergrund und ermöglicht eine saubere Anzeige mit \texttt{docker ps}.
+\end{itemize}
+
+% ===================== EXERCISE 2 =====================
+\section*{Exercise 2 – Dockerfile und Node‑Anwendung}
+
+\subsection*{Ziel}
+Eine kleine Node.js‑Anwendung soll so containerisiert werden, dass sie ohne weitere Abhängigkeiten ausführbar ist. Dazu wird eine Dockerfile vervollständigt, das Image gebaut und der Container ausgeführt. Als Nachweis soll die Anwendung im Browser erreichbar sein.
+
+\subsection*{Vorgehen (Kurzprotokoll)}
+\begin{enumerate}
+  \item In der bereitgestellten Dockerfile fehlten zwei Anweisungen. Die Zeile \texttt{COPY . /home/app} kopiert den kompletten Quellcode in das Image, und die Zeile \texttt{CMD ["node", "/home/app/server.js"]} definiert den Entrypoint der Applikation. Abbildung~\ref{fig:dockerfile} zeigt die fertiggestellte Datei.
+  \item Mit \texttt{docker build -t my-app .} wurde das Image gebaut und mit dem Tag \texttt{my-app} versehen (Abbildung~\ref{fig:build}).
+  \item Der Container wurde im Hintergrund gestartet: \texttt{docker run -p 3000:3000 -d my-app}. Anschließend wurde versucht, mittels \texttt{docker logs} Ausgaben der Anwendung zu erhalten (Abbildung~\ref{fig:run-logs}). Da die Anwendung nur auf Anfragen reagiert, blieb die Log‑Ausgabe leer.
+  \item Über den Browser unter \texttt{http://localhost:3000} wurde die Ausgabe „Hello World Hello World“ angezeigt (Abbildung~\ref{fig:browser}). Dies beweist, dass der Container korrekt läuft und auf Port 3000 erreichbar ist.
+\end{enumerate}
+
+\subsection*{Ergebnis / Nachweis}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{image10.png}
+  \caption{Vervollständigte Dockerfile mit \texttt{COPY} und \texttt{CMD}.\label{fig:dockerfile}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{image11.png}
+  \caption{Erfolgreicher Build des Images \texttt{my-app}.\label{fig:build}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.65\textwidth]{image12.png}
+  \caption{Starten des Containers und Aufruf von \texttt{docker logs}.\label{fig:run-logs}}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{image13.png}
+  \caption{Im Browser unter \texttt{localhost:3000} erscheint die Ausgabe der Node‑Anwendung.\label{fig:browser}}
+\end{figure}
+
+\subsection*{Probleme \& Lösungen (Lessons Learned)}
+\begin{itemize}
+  \item Die Anwendung gibt ohne zusätzliche \texttt{console.log}-Anweisungen keine Logs aus; daher zeigte \texttt{docker logs -f} keinen Output. Dies wurde behoben, indem der Test über den Browser durchgeführt wurde.
+  \item Der Build zeigte deutlich, wie wichtig es ist, eine \texttt{COPY}-Instruktion und eine korrekte \texttt{CMD}-Definition zu setzen, damit das Image lauffähig ist.
+\end{itemize}
+
+% ===================== FAZIT =====================
+\section*{Fazit}
+Durch die Ausführung dieser Übungen wurde der praktische Umgang mit Docker vertieft. Wir haben Images heruntergeladen, Container gestartet, gestoppt und entfernt, ein Volume verwendet und ein eigenes Docker‑Image für eine Node‑Anwendung erstellt. Die abschließende „Hello World“-Ausgabe im Browser bestätigte den Erfolg der Containerisierung. Insgesamt zeigte sich, dass Docker eine einfache Möglichkeit bietet, Anwendungen reproduzierbar und isoliert auszuführen.
+
+\end{document}
