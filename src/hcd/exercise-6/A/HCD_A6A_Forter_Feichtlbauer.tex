@@ -33,7 +33,7 @@
 \lhead{Studiengang: HCD}
 \chead{HopIn Usability Test (A6A)}
 \rhead{Assignment: A6A}
-\lfoot{Kevin Forter \& Benjamin Feichtlbauer}
+\lfoot{Kevin Forter \& Benjamin Feichtlbauer \& Rohit Birdi \& Muhammad Suhail Edipoglu}
 \rfoot{\thepage}
 
 % Absätze & Listen
@@ -62,7 +62,7 @@
   % --- Tabellenbereich ---
   \begin{tabular}{@{}p{4cm}p{9cm}@{}}
     \textbf{Studiengang:} & HCD \\
-    \textbf{Kurs / Studierende:} & Kevin Forter \& Benjamin Feichtlbauer \\
+    \textbf{Kurs / Studierende:} & Kevin Forter \& Benjamin Feichtlbauer \& Rohit Birdi \& Muhammad Suhail Edipoglu \\
   \end{tabular}
 
   \vfill
@@ -106,8 +106,8 @@ Die Aufgaben sind realistisch, zielbasiert und ergebnisoffen formuliert. Zeitlim
 
 \subsection*{T1 – Event-Gruppe anlegen (Kernflow)}
 \textbf{Ziel:} Learnability, Efficiency.\\
-\textbf{Beschreibung:} ``Stell dir vor, ihr plant für \textbf{morgen} ein gemeinsames \textbf{Sporttreffen} in der Nähe. \textbf{Erstelle eine neue Gruppe}, gib ihr einen passenden Titel, setze \textbf{Ort und Uhrzeit} und füge eine kurze Beschreibung hinzu.''\\
-\textbf{Erfolgskriterien:} Gruppe sichtbar angelegt, Kernfelder korrekt befüllt.\\
+\textbf{Beschreibung:} ``Stell dir vor, ihr plant für \textbf{morgen} ein gemeinsames \textbf{Sporttreffen} in der Nähe. \textbf{Erstelle eine neue Gruppe}, gib ihr einen passenden Titel, setze \textbf{Ort und Uhrzeit} und füge eine kurze Beschreibung hinzu.'' - (Alles logischerweise hypothetisch, da in FIMGA keine Eingaben gemacht werden können)\\
+\textbf{Erfolgskriterien:} Gruppe sichtbar angelegt\\
 \textbf{Abbruchkriterium:} 5 Minuten.
 
 \subsection*{T2 – Teilnehmende einladen}
@@ -116,10 +116,10 @@ Die Aufgaben sind realistisch, zielbasiert und ergebnisoffen formuliert. Zeitlim
 \textbf{Erfolgskriterien:} Invite-Lösung gefunden, Freigabe initiiert.\\
 \textbf{Abbruchkriterium:} 3 Minuten.
 
-\subsection*{T3 – Umfrage/Abstimmung erstellen}
+\subsection*{T3 – Chat erstellen}
 \textbf{Ziel:} Learnability, Memorability.\\
-\textbf{Beschreibung:} ``Lege in der Gruppe eine \textbf{Umfrage} an, um zwischen \textbf{zwei Orten} zu entscheiden.''\\
-\textbf{Erfolgskriterien:} Umfrage erstellt, zwei Optionen angelegt.\\
+\textbf{Beschreibung:} ``Lege in der Gruppe einen \textbf{Chat} an. Gehe in ein Event mit einem Chat (``Serena's Birthday'') und lese die Konversationen an''\\
+\textbf{Erfolgskriterien:} Chat erstellt und bestehende Konversationen durchgelesen.\\
 \textbf{Abbruchkriterium:} 4 Minuten.
 
 \subsection*{T4 – To-Do hinzufügen und abhaken}
@@ -130,8 +130,8 @@ Die Aufgaben sind realistisch, zielbasiert und ergebnisoffen formuliert. Zeitlim
 
 \subsection*{T5 – Gruppe abschließen/archivieren}
 \textbf{Ziel:} Memorability, Errors, Satisfaction.\\
-\textbf{Beschreibung:} ``Das Event ist vorbei. \textbf{Archiviere die Gruppe} oder markiere sie als abgeschlossen.''\\
-\textbf{Erfolgskriterien:} Gruppe ist nicht mehr in der aktiven Liste, im Archiv auffindbar.\\
+\textbf{Beschreibung:} ``Das Event ist vorbei. \textbf{Gehen in das Archiv} und öffne ein archiviertes Event (``z.B. Elternabend'').''\\
+\textbf{Erfolgskriterien:} Archiviertes Event geöffnet.\\
 \textbf{Abbruchkriterium:} 3 Minuten.
 
 \section{Messkonzept: Was wird gemessen / notiert}
@@ -157,7 +157,9 @@ Die Aufgaben sind realistisch, zielbasiert und ergebnisoffen formuliert. Zeitlim
 \end{itemize}
 
 \subsection*{Post-Fragebogen (ca.\ 2 Minuten)}
-\textbf{UMUX-Lite} (1--7, 1 = stimme gar nicht zu, 7 = stimme voll zu)\\[-0.6em]
+\begin{minipage}{0.9\linewidth}
+\textbf{UMUX-Lite} (1--7, 1 = stimme gar nicht zu, 7 = stimme voll zu)
+\end{minipage}\\[-0.6em]
 \begin{enumerate}
   \item \appname{} \textit{ist nützlich} für das, was ich tun möchte.
   \item \appname{} \textit{ist einfach zu bedienen}.
@@ -167,7 +169,6 @@ Die Aufgaben sind realistisch, zielbasiert und ergebnisoffen formuliert. Zeitlim
   \item Insgesamt bin ich mit \appname{} zufrieden.
   \item Ich würde \appname{} Freund/innen empfehlen.
 \end{enumerate}
-\textbf{Freitext:}\\[-0.6em]
 \begin{itemize}
   \item Was war \textbf{am hilfreichsten}? \_\_\_\_\_\_
   \item Was war \textbf{am nervigsten/unverständlichsten}? \_\_\_\_\_\_
@@ -202,21 +203,20 @@ T5 & & & & & \\
 \end{longtable}
 
 \subsection*{B3 – Post-Fragebogen (UMUX-Lite \& Zusatz)}
-\begin{tabularx}{\linewidth}{p{10cm} *{7}{>{\centering\arraybackslash}p{0.9cm}}}
+\begin{tabularx}{\linewidth}{*{7}{>{\centering\arraybackslash}p{0.9cm}} p{10cm}}
 \toprule
- & \multicolumn{7}{c}{\textbf{Antwortskala (1 = gar nicht, 7 = voll)}}\\
-\cmidrule(lr){2-8}
-\textbf{Item} & 1 & 2 & 3 & 4 & 5 & 6 & 7\\
+\multicolumn{7}{c}{\textbf{Antwortskala (1 = gar nicht, 7 = voll)}} & \\[-0.3em]
+\cmidrule(lr){1-7}
+\textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{Item}\\
 \midrule
-\appname{} ist nützlich für das, was ich tun möchte. & & & & & & & \\
-\appname{} ist einfach zu bedienen. & & & & & & & \\
-Insgesamt bin ich mit \appname{} zufrieden. & & & & & & & \\
-Ich würde \appname{} Freund/innen empfehlen. & & & & & & & \\
+ & & & & & & & \appname{} ist nützlich für das, was ich tun möchte.\\
+ & & & & & & & \appname{} ist einfach zu bedienen.\\
+ & & & & & & & Insgesamt bin ich mit \appname{} zufrieden.\\
+ & & & & & & & Ich würde \appname{} Freund/innen empfehlen.\\
 \bottomrule
 \end{tabularx}
 
 \vspace{1em}
-\textbf{Freitext}\\
 \begin{tabularx}{\linewidth}{|X|}
 \hline
 Was war am hilfreichsten? \vspace{2cm}\\\hline
