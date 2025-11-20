@@ -1,0 +1,239 @@
+\documentclass[11pt,a4paper]{article}
+
+% Encoding & Sprache
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+% Layout & Typografie
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{xcolor}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  citecolor=black
+}
+
+% Header / Footer
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Studiengang: HCD}
+\chead{HopIn Usability Test (A6B)}
+\rhead{Assignment: A6B}
+\lfoot{Kevin Forter \& Benjamin Feichtlbauer \& Rohit Birdi \& Muhammad Suhail Edipoglu}
+\rfoot{\thepage}
+
+% Absätze & Listen
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+\setlist[itemize]{leftmargin=1.2em}
+\setlist[enumerate]{leftmargin=1.4em}
+
+% Makros
+\newcommand{\appname}{\textbf{HopIn}}
+\newcommand{\minisection}[1]{\vspace{0.4em}\textbf{#1}\quad}
+\newcommand{\ratingscale}{
+  \begin{tabularx}{0.6\linewidth}{*{7}{>{\centering\arraybackslash}p{0.9cm}}}
+  \toprule
+  \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7}\\
+  \bottomrule
+  \end{tabularx}
+}
+\newcommand{\ratingitem}[1]{#1\\[0.3em]\ratingscale\par\vspace{0.8em}}
+
+\begin{document}
+
+% Titelseite
+\begin{titlepage}
+  \centering
+  {\Large Human-Centered Design (HCD)}\\[2ex]
+  {\large Assignment A6B}\\[10ex]
+  {\huge \textbf{HopIn}: Moderierter Usability-Test}\\[3ex]
+  {\large Testplan, Aufgaben, Messkonzept und Fragebögen}\\[8ex]
+
+  % --- Bild zentral einfügen ---
+  \includegraphics[width=0.4\textwidth]{images/iphone_mockup.png}\\[8ex]
+
+  % --- Tabellenbereich ---
+  \begin{tabular}{@{}p{4cm}p{9cm}@{}}
+    \textbf{Studiengang:} & HCD \\
+    \textbf{Kurs / Studierende:} & Kevin Forter \& Benjamin Feichtlbauer \& Rohit Birdi \& Muhammad Suhail Edipoglu \\
+  \end{tabular}
+
+  \vfill
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Beschreibung des getesteten Prototyps}
+\appname{} ist eine mobile App / Web-App zur \textbf{temporären Event-Organisation} über \textbf{Gruppen}, die nach dem Anlass \textbf{automatisch archiviert} werden. Nutzerinnen und Nutzer können spontane oder kurzfristige Aktivitäten (z.\,B. Partys, Ausflüge, Sport, Uni-Projekte) gemeinsam planen, kommunizieren und durchführen. Im Unterschied zu dauerhaften Messenger-Gruppen bleibt der Kommunikationsbereich in \appname{} aufgeräumt: Nach Ende des Events verschwindet die Gruppe aus der aktiven Liste und ist im Archiv weiterhin einsehbar.
+
+\minisection{Zentrale Funktionen (aus dem Prototyp):}
+\begin{itemize}
+  \item \textbf{Event-Gruppe erstellen} (Titel, Datum/Zeit, Ort, Beschreibung).
+  \item \textbf{Teilnehmende einladen} (Beitrittslink / QR teilen).
+  \item \textbf{Chat \& Organisation} an einem Ort: \textbf{To-Dos}, \textbf{Umfragen/Abstimmungen} (z.\,B. Termin/Ort), Hinweise.
+  \item \textbf{Gruppe abschließen/archivieren} nach Event-Ende (automatisch).
+\end{itemize}
+
+\section{Testziele gemäss Jakob Nielsen}
+Wir orientieren uns an \textbf{Nielsens fünf Qualitätskomponenten} (Usability-Ziele) und leiten daraus konkrete Messgrößen ab:
+\begin{enumerate}
+  \item \textbf{Learnability} – Wie leicht können Erstnutzende die Hauptaufgaben durchführen?
+  \item \textbf{Efficiency} – Wie schnell und reibungslos laufen die Kernflows ab?
+  \item \textbf{Memorability} – Finden Nutzende nach kurzer Ablenkung schnell wieder hinein?
+  \item \textbf{Errors} – Welche Fehler treten auf? Wie schwer sind sie? Wie gut lassen sie sich beheben?
+  \item \textbf{Satisfaction} – Wie zufrieden sind die Nutzenden (subjektiv)?
+\end{enumerate}
+
+\section{Rahmenbedingungen des Tests}
+\begin{itemize}
+  \item \textbf{Setting:} Moderierter Lab-Test (im Unterricht). Testende sind Kommilitoninnen/Kommilitonen.
+  \item \textbf{Dauer pro Person:} 20 Minuten (Intro, ggf.\ Kurzfragebogen, Aufgaben, Wrap-up, Post-Fragebogen).
+  \item \textbf{Rollen:} Moderator/in, Protokollant/in (Notizen, Zeiten), ggf.\ stille Beobachter/innen.
+  \item \textbf{Protokoll:} \textit{Think-Aloud}; neutrale Nachfragen, keine führenden Fragen.
+  \item \textbf{Aufzeichnung:} Falls möglich, Bildschirmaufnahme für spätere Analyse (nur intern).
+\end{itemize}
+
+\section{Aufgaben (Tasks)}
+Die Aufgaben sind realistisch, zielbasiert und ergebnisoffen formuliert.
+
+\subsection*{T1 – Event-Gruppe anlegen (Kernflow)}
+\textbf{Ziel:} Learnability, Efficiency.\\
+\textbf{Beschreibung:} ``Deine Laufgruppe organisiert für Samstagmorgen ein \textbf{Sunrise Workout} am Donaukanal. \textbf{Lege dafür eine neue Event-Gruppe an}, gib ihr einen passenden Titel, hinterlege Treffpunkt und Uhrzeit und notiere kurz, dass alle ihre Sportmatten mitbringen sollen.''\\
+\textbf{Erfolgskriterien:} Gruppe sichtbar angelegt\\
+
+\subsection*{T2 – Teilnehmende einladen}
+\textbf{Ziel:} Learnability, Errors.\\
+\textbf{Beschreibung:} ``Anna und Leo sollen beim \textbf{Sunrise Workout} dabei sein. \textbf{Finde den Beitrittslink oder QR-Code} der Gruppe und teile ihn mit den beiden, damit sie sich selbst anmelden können.''\\
+\textbf{Erfolgskriterien:} Invite-Lösung gefunden, Freigabe initiiert.\\
+
+\subsection*{T3 – Chat erstellen}
+\textbf{Ziel:} Learnability, Memorability.\\
+\textbf{Beschreibung:} ``In der bestehenden Gruppe \textbf{``Serena's Birthday''} wurde über details zum Ablauf des Geburtstags geschrieben. Lies kurz nach, was im bestehenden Geburtstags-Chat bereits abgesprochen wurde.''\\
+\textbf{Erfolgskriterien:} Bestehende Konversationen durchgelesen.\\
+
+\subsection*{T4 – To-Do hinzufügen und abhaken}
+\textbf{Ziel:} Efficiency, Errors.\\
+\textbf{Beschreibung:} ``Für das kommende Event \textbf{``Boys Trip''} fehlt noch Bier. Weise die die ToDo selbst zu und setze den Haken, damit alle sehen, dass du dich um das Bier kümmerst.''\\
+\textbf{Erfolgskriterien:} ToDo selbst zugewiesen.\\
+
+\subsection*{T5 – Gruppe abschließen/archivieren}
+\textbf{Ziel:} Memorability, Errors, Satisfaction.\\
+\textbf{Beschreibung:} ``Beim \textbf{Elternabend} letzter Woche habt ihr über die heutigen Tasks geschrieben. \textbf{Wechsle in das Archiv} und öffne dort das entsprechende Event, um nachzuschauen, was geschrieben wurde.''\\
+\textbf{Erfolgskriterien:} Archiviertes Event geöffnet.\\
+
+\section{Messkonzept: Was wird gemessen / notiert}
+\begin{itemize}
+  \item \textbf{Task-Erfolg} (bestanden / nicht bestanden / mit Hilfe).
+  \item \textbf{Fehler \& Umgehungen} (Art, Häufigkeit, Schweregrad 0--4).
+  \item \textbf{Rückfragen/Hilfen} (Anzahl, Art).
+  \item \textbf{Beobachtungen \& Zitate} (Verständnisprobleme, Erwartung vs.\ Systemverhalten).
+  \item \textbf{Subjektive Bewertung} (Likert-Skalen; Post-Fragebogen).
+\end{itemize}
+
+\subsection*{Schweregradskala (0--4)}
+\begin{itemize}
+  \item 0 = Kosmetik \quad 1 = Klein \quad 2 = Mittel \quad 3 = Groß \quad 4 = Kritisch (Blocker)
+\end{itemize}
+
+\section{Fragebögen}
+\subsection*{Kurz-Intake (optional, 1 Minute)}
+\begin{itemize}
+  \item Erfahrung mit Event-/Gruppen-Apps (z.\,B. WhatsApp-Gruppen, Telegram, Discord): \textit{Täglich / Wöchentlich / Monatlich / Seltener / Nie}
+  \item Bevorzugtes Gerät: \textit{Smartphone / Desktop / Beides}
+\end{itemize}
+
+\subsection*{Post-Fragebogen}
+\begin{minipage}{0.9\linewidth}
+\textbf{UMUX-Lite} (1--7, 1 = stimme gar nicht zu, 7 = stimme voll zu)
+\end{minipage}\\[-0.6em]
+\begin{enumerate}
+  \item \ratingitem{\appname{} \textit{ist nützlich} für das, was ich tun möchte.}
+  \item \ratingitem{\appname{} \textit{ist einfach zu bedienen}.}
+\end{enumerate}
+\textbf{Zusatz (1--7):}\\[-0.6em]
+\begin{enumerate}[resume]
+  \item \ratingitem{Insgesamt bin ich mit \appname{} zufrieden.}
+  \item \ratingitem{Ich würde \appname{} Freund/innen empfehlen.}
+\end{enumerate}
+\begin{itemize}
+  \item Was war \textbf{am hilfreichsten}? \_\_\_\_\_\_
+  \item Was war \textbf{am nervigsten/unverständlichsten}? \_\_\_\_\_\_
+  \item \textbf{Wünsche/Ideen} für Verbesserungen: \_\_\_\_\_\_
+\end{itemize}
+
+\section{Ablauf \& Moderationsleitfaden}
+\begin{enumerate}
+  \item \textbf{Begrüßung \& Einverständnis}: Zweck, Aufzeichnung, dass \textit{das Produkt im Test ist}.
+  \item \textbf{Kurz-Intake} (optional).
+  \item \textbf{Aufgaben T1--T5 mit Think-Aloud}. Neutrale Nachfragen: ``Was erwarten Sie hier?'' (keine Führung)
+  \item \textbf{Wrap-up}: Top-3 Probleme, größter Aha-Moment.
+  \item \textbf{Post-Fragebogen}.
+\end{enumerate}
+
+\section{Beobachtungsbögen \& Formulare (Druckvorlagen)}
+\subsection*{B1 – Einverständniserklärung (Kurz)}
+Mit Ihrer Zustimmung zeichnen wir diese Sitzung auf. Die Aufzeichnung dient nur der Auswertung im Kurs und wird nicht extern geteilt. Sie können die Teilnahme jederzeit ohne Nachteile abbrechen.\\[0.4em]
+\begin{tabularx}{\linewidth}{@{}lX lX@{}}
+\textbf{Name:} & \rule{\linewidth}{0.4pt} & \textbf{Datum/Unterschrift:} & \rule{\linewidth}{0.4pt}
+\end{tabularx}
+
+\subsection*{B2 – Task-Tracking (pro Person)}
+\begin{tabularx}{\linewidth}{p{1.6cm}p{3.2cm}p{3.8cm}p{1.6cm}X}
+\toprule
+\textbf{Task} & \textbf{Erfolg (Ja/Nein/Hilfe)} & \textbf{Fehler} & \textbf{Schwere} & \textbf{Beobachtungen}\\
+\midrule
+T1 & & & & \\
+T2 & & & & \\
+T3 & & & & \\
+T4 & & & & \\
+T5 & & & & \\
+\bottomrule
+\end{tabularx}
+
+\subsection*{B3 – Post-Fragebogen (UMUX-Lite \& Zusatz)}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{p{9cm}*{7}{>{\centering\arraybackslash}p{0.9cm}}}
+\toprule
+\textbf{Item} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7}\\
+\midrule
+\appname{} ist nützlich für das, was ich tun möchte. & & & & & & & \\
+\appname{} ist einfach zu bedienen. & & & & & & & \\
+Insgesamt bin ich mit \appname{} zufrieden. & & & & & & & \\
+Ich würde \appname{} Freund/innen empfehlen. & & & & & & & \\
+\bottomrule
+\end{tabularx}
+\setlength{\tabcolsep}{6pt}
+
+\vspace{1em}
+\begin{tabularx}{\linewidth}{|X|}
+\hline
+Was war am hilfreichsten? \vspace{2cm}\\\hline
+Was war am nervigsten/unverständlichsten? \vspace{2cm}\\\hline
+Wünsche/Ideen für Verbesserungen: \vspace{2.5cm}\\\hline
+\end{tabularx}
+
+\section{Auswertung \& Reporting (Hinweise)}
+\begin{itemize}
+  \item Kennzahlen je Task: Erfolgsrate, Median-Zeit, Fehlerarten, Hilfen.
+  \item Schweregrad-Priorisierung (Impact $\times$ Häufigkeit) der gefundenen Probleme.
+  \item Ableitung konkreter Design-/Content-Empfehlungen je Fund (mit Screenshot, falls möglich).
+  \item Optional: Gesamt-\textit{UMUX-Lite}-Score (Mittelwert der zwei Kernitems skaliert auf 0--100).
+\end{itemize}
+
+\end{document}
