@@ -1,0 +1,294 @@
+%
+% FH Technikum Wien
+% !TEX encoding = UTF-8 Unicode
+%
+% Version V2.24 von 2024-12-19 otrebski
+%
+\documentclass[BMR,Seminar,ngerman,IEEE]{twbook}
+\renewcommand*{\degreecourse}{FH Technikum Wien, Bachelorstudiengang BIF\\Lehrveranstaltung BIF-VZ-3-WS2025-CLCOM-EN/158471}
+
+% --- Encoding & fonts ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% --- Graphics, figures, urls, lists, tables, code ---
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage[final]{microtype} % hilft gegen Overfull/Underfull
+\emergencystretch=2em         % sanfter Puffer für Zeilenumbruch
+
+% Screenshots hier hinein legen:
+\graphicspath{{screenshots/}}
+
+% --- Bibliography (twbook lädt biblatex via Hook, sobald inputenc geladen ist) ---
+\addbibresource{Literatur.bib}
+
+% --- Listings (inkl. YAML) ---
+\lstdefinelanguage{yaml}{
+  keywords={true,false,null,y,n},
+  comment=[l]{\#},
+  morestring=[b]',
+  morestring=[b]",
+  sensitive=false,
+  showstringspaces=false,
+  literate =    {---}{{\textcolor{gray}{---}}}3
+                {>}{{\textcolor{gray}{>}}}1
+                {|}{{\textcolor{gray}{|}}}1
+                {:}{{\textcolor{blue}{:}}}1
+                {-}{{\textcolor{gray}{-}}}1,
+}
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  backgroundcolor=\color{gray!5},
+  captionpos=b
+}
+
+% --- Convenience figure macros ---
+\newcommand{\screenshotH}[3]{%
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{#1}%
+    \caption{#2}%
+    \label{fig:#3}%
+  \end{figure}%
+}
+\newcommand{\placeholderfig}[2]{%
+  \begin{figure}[htbp]
+    \centering
+    \fbox{\rule{0pt}{120pt}\rule{0.9\linewidth}{0pt}}%
+    \caption{#1}%
+    \label{fig:#2}%
+  \end{figure}%
+}
+
+% Die nachfolgenden Pakete stellen sonst nicht benötigte Features zur Verfügung
+\usepackage{blindtext}
+
+% --- Hyperref am Schluss laden (robuster) ---
+\usepackage{hyperref}
+
+%
+% Einträge für Deckblatt, Kurzfassung, etc.
+%
+\title{Semesterprojekt – DevOps und Cloud Computing 3B}
+\author{Benjamin Feichtlbauer, Kevin Forter, Mikulovic Luka \and Tepsurkaev Abdulah}
+\place{Wien}
+% \acknowledgements{\blindtext}
+
+\begin{document}
+
+\maketitle
+
+% ============================================================================
+\onecolumn
+\newpage
+
+% ============================================================================
+\chapter{Milestone 2}
+
+\section{Network Setup}
+In this section, we describe the setup of the Virtual Private Cloud (VPC) and the associated network components within AWS.
+
+\subsection{VPC Configuration}
+We created a new VPC with the IPv4 CIDR block \texttt{10.0.0.0/16}. This provides a private network space for our infrastructure.
+
+\screenshotH{assets/setup/vpc.png}{VPC Configuration}{vpc}
+
+\subsection{Subnets}
+A public subnet was created within the VPC with the CIDR block \texttt{10.0.0.0/24}. This subnet hosts our instances and allows them to communicate with each other and the internet.
+
+\screenshotH{assets/setup/subnet.png}{Subnet Configuration}{subnet}
+\screenshotH{assets/setup/subnet_settings.png}{Subnet Settings}{subnet_settings}
+
+\subsection{Internet Gateway}
+To enable internet access for the resources in our public subnet, we attached an Internet Gateway to the VPC.
+
+\screenshotH{assets/setup/igw.png}{Internet Gateway}{igw}
+
+\subsection{Route Tables}
+A custom route table was configured to direct traffic destined for the internet (\texttt{0.0.0.0/0}) to the Internet Gateway. This route table is associated with our public subnet.
+
+\screenshotH{assets/setup/routetable.png}{Route Table}{routetable}
+\screenshotH{assets/setup/routetable_default_route.png}{Route Table Default Route}{routetable_route}
+\screenshotH{assets/setup/routetable_subnet_associations.png}{Route Table Subnet Association}{routetable_association}
+
+\subsection{Security Groups}
+Specific security groups were created for each component to control inbound and outbound traffic.
+
+\screenshotH{assets/setup/dns_security_group.png}{DNS Security Group}{sg_dns}
+\screenshotH{assets/setup/gitlab_security_group.png}{GitLab Security Group}{sg_gitlab}
+\screenshotH{assets/setup/runnger_security_group.png}{Runner Security Group}{sg_runner}
+
+\section{DNS Setup}
+We implemented a split-horizon DNS architecture using Bind9, with a primary and a secondary DNS server to ensure redundancy. The domain configured is \texttt{ci.intern}.
+
+\subsection{Primary DNS}
+The primary DNS server is hosted on an EC2 instance with the private IP \texttt{10.0.0.10}.
+
+\screenshotH{assets/instances/dns1/details.png}{Primary DNS Instance Details}{dns1_details}
+
+\subsubsection{Installation}
+We installed Bind9 on the Ubuntu 22.04 LTS instance:
+\begin{lstlisting}[language=bash]
+sudo apt update
+sudo apt install bind9 bind9utils -y
+\end{lstlisting}
+
+\subsubsection{Configuration}
+The zone configuration in \texttt{/etc/bind/named.conf.local} defines the forward and reverse lookup zones:
+
+\begin{lstlisting}
+zone "ci.intern" {
+    type master;
+    file "/etc/bind/db.ci.intern";
+    allow-transfer { 10.0.0.11; };
+};
+
+zone "0.0.10.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.10";
+    allow-transfer { 10.0.0.11; };
+};
+\end{lstlisting}
+
+The forward zone file \texttt{/etc/bind/db.ci.intern} maps hostnames to IP addresses:
+
+\begin{lstlisting}
+$TTL 3600
+@   IN  SOA primary.dns.ci.intern. admin.ci.intern. (
+        2025010101 ; Serial
+        3600       ; Refresh
+        1800       ; Retry
+        604800     ; Expire
+        86400 )    ; Negative Cache TTL
+
+    IN  NS  primary.dns.ci.intern.
+    IN  NS  secondary.dns.ci.intern.
+
+primary.dns     IN A 10.0.0.10
+secondary.dns   IN A 10.0.0.11
+gitlab          IN A 10.0.0.20
+runner          IN A 10.0.0.21
+\end{lstlisting}
+
+The reverse zone file \texttt{/etc/bind/db.10} maps IP addresses back to hostnames:
+
+\begin{lstlisting}
+$TTL 3600
+@   IN  SOA primary.dns.ci.intern. admin.ci.intern. (
+        2025010101
+        3600
+        1800
+        604800
+        86400 )
+
+    IN NS primary.dns.ci.intern.
+    IN NS secondary.dns.ci.intern.
+
+10  IN PTR primary.dns.ci.intern.
+11  IN PTR secondary.dns.ci.intern.
+20  IN PTR gitlab.ci.intern.
+21  IN PTR runner.ci.intern.
+\end{lstlisting}
+
+\subsection{Secondary DNS}
+The secondary DNS server is hosted on an EC2 instance with the private IP \texttt{10.0.0.11}. It acts as a slave to the primary server.
+
+\screenshotH{assets/instances/dns2/details.png}{Secondary DNS Instance Details}{dns2_details}
+
+\subsubsection{Configuration}
+The configuration in \texttt{/etc/bind/named.conf.local} specifies the master server for zone transfers:
+
+\begin{lstlisting}
+zone "ci.intern" {
+    type slave;
+    masters { 10.0.0.10; };
+    file "/var/cache/bind/db.ci.intern";
+};
+
+zone "0.0.10.in-addr.arpa" {
+    type slave;
+    masters { 10.0.0.10; };
+    file "/var/cache/bind/db.10";
+};
+\end{lstlisting}
+
+\section{GitLab Server Setup}
+We deployed a self-hosted GitLab CE server using Docker on an EC2 instance with the private IP \texttt{10.0.0.20}.
+
+\screenshotH{assets/instances/gitlab/details.png}{GitLab Server Instance Details}{gitlab_details}
+
+\subsection{Installation}
+Docker and Docker Compose were installed, and a persistent volume structure was created. The \texttt{docker-compose.yml} configuration is as follows:
+
+\begin{lstlisting}[language=yaml]
+version: '3.7'
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    hostname: "gitlab.ci.intern"
+    restart: always
+    container_name: gitlab
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /srv/gitlab/config:/etc/gitlab
+      - /srv/gitlab/logs:/var/log/gitlab
+      - /srv/gitlab/data:/var/opt/gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.ci.intern'
+\end{lstlisting}
+
+\subsection{Verification}
+The GitLab instance is accessible via the browser using the public IP or the internal DNS name (within the network).
+
+\screenshotH{assets/instances/gitlab/homepage.png}{GitLab Homepage}{gitlab_homepage}
+\screenshotH{assets/instances/gitlab/login.png}{GitLab Login}{gitlab_login}
+
+\section{GitLab Runner Setup}
+A GitLab Runner was set up on a separate EC2 instance (\texttt{10.0.0.21}) to execute CI/CD jobs.
+
+\screenshotH{assets/instances/runner/details.png}{GitLab Runner Instance Details}{runner_details}
+
+\subsection{Configuration}
+The runner was configured to use the internal DNS servers to resolve the GitLab server's hostname.
+
+\begin{lstlisting}[language=bash]
+sudo systemctl disable --now systemd-resolved
+sudo rm /etc/resolv.conf
+echo "nameserver 10.0.0.10" | sudo tee /etc/resolv.conf
+echo "nameserver 10.0.0.11" | sudo tee -a /etc/resolv.conf
+\end{lstlisting}
+
+The runner container was started with specific DNS settings:
+
+\begin{lstlisting}[language=bash]
+sudo docker run -d --name gitlab-runner \
+  --restart always \
+  -v /srv/gitlab-runner/config:/etc/gitlab-runner \
+  --dns 10.0.0.10 \
+  --dns 10.0.0.11 \
+  gitlab/gitlab-runner:latest
+\end{lstlisting}
+
+\subsection{Registration}
+The runner was registered with the GitLab server using the internal URL \texttt{http://gitlab.ci.intern}.
+
+\begin{lstlisting}[language=bash]
+sudo docker exec -it gitlab-runner gitlab-runner register
+# URL: http://gitlab.ci.intern
+# Executor: docker
+# Default Docker image: alpine:latest
+\end{lstlisting}
+
+\end{document}
