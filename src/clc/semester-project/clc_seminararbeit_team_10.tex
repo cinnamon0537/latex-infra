@@ -255,6 +255,27 @@ The GitLab instance is accessible via the browser using the public IP or the int
 \screenshotH{assets/instances/gitlab/homepage.png}{GitLab Homepage}{gitlab_homepage}
 \screenshotH{assets/instances/gitlab/login.png}{GitLab Login}{gitlab_login}
 
+\subsection{System Configuration}
+The server runs on a \texttt{t3.medium} instance with 20 GB of gp3 storage to ensure sufficient resources for GitLab.
+
+\subsubsection{Swap Configuration}
+To prevent out-of-memory errors, we configured a 4GB swap file:
+
+\begin{lstlisting}[language=bash]
+sudo fallocate -l 4G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+\end{lstlisting}
+
+\subsubsection{Initial Access}
+After installation, the initial root password was retrieved from the container configuration:
+
+\begin{lstlisting}[language=bash]
+sudo cat /srv/gitlab/config/initial_root_password
+\end{lstlisting}
+
 \section{GitLab Runner Setup}
 A GitLab Runner was set up on a separate EC2 instance (\texttt{10.0.0.21}) to execute CI/CD jobs.
 
@@ -290,5 +311,52 @@ sudo docker exec -it gitlab-runner gitlab-runner register
 # Executor: docker
 # Default Docker image: alpine:latest
 \end{lstlisting}
+
+
+
+\section{GitLab Workflow Verification}
+To ensure the GitLab server and Runner are functioning correctly, we performed a complete workflow test involving repository creation, code changes, and pipeline execution.
+
+\subsection{Repository Creation}
+We created a new blank project named \texttt{test-runner} in the GitLab web interface.
+
+\screenshotH{assets/instances/gitlab/new_repo.png}{Creating a New Project}{new_repo}
+\screenshotH{assets/instances/gitlab/init_repo.png}{Initialized Empty Repository}{init_repo}
+
+\subsection{SSH Configuration}
+To facilitate secure communication between the local machine and the GitLab server, we generated an SSH key pair and added the public key to the GitLab user profile.
+
+\screenshotH{assets/instances/gitlab/ssh_key.png}{Adding SSH Key}{ssh_key}
+
+\subsection{Cloning and Committing}
+Since the local machine is outside the AWS VPC, we cloned the repository using the GitLab server's public IP address.
+
+\begin{lstlisting}[language=bash]
+git clone http://<PUBLIC_IP>/root/test-runner.git
+cd test-runner
+\end{lstlisting}
+
+We then created a test file \texttt{demo.txt} and committed it to the repository.
+
+\begin{lstlisting}[language=bash]
+echo "test run $(date)" >> demo.txt
+git add .
+git commit -m "demo pipeline test"
+\end{lstlisting}
+
+\screenshotH{assets/instances/gitlab/commit.png}{Git Commit}{git_commit}
+
+\subsection{Pushing Changes}
+The changes were pushed to the remote repository.
+
+\begin{lstlisting}[language=bash]
+git push
+\end{lstlisting}
+
+\screenshotH{assets/instances/gitlab/push.png}{Git Push}{git_push}
+
+After the push, the new file is visible in the repository, and the CI/CD pipeline is automatically triggered.
+
+\screenshotH{assets/instances/gitlab/repo_after_push.png}{Repository after Push}{repo_after_push}
 
 \end{document}
