@@ -441,6 +441,11 @@ uid: benji
 ...
 \end{verbatim}
 
+\subsubsection{Verification}
+To verify that the users were correctly added to the directory structure and are retrievable, the \texttt{ldapsearch} command was utilized. This ensures that the Lightweight Directory Access Protocol is correctly serving user information before integrating with GitLab.
+
+\screenshotH{assets/ldap/ldap_search.png}{LDAP Search Result Verification}{ldap_search}
+
 \subsection{GitLab LDAP Integration}
 GitLab was configured to authenticate against this LDAP server. The configuration in \texttt{/etc/gitlab/gitlab.rb} enabled LDAP and defined the connection details:
 
@@ -475,6 +480,11 @@ To enforce the use of the central LDAP directory, the option for local sign-ups 
 Projects that were previously created by local users or the administrator were transferred to the new Group structure. This ensures that the newly invited LDAP users have immediate access to the codebase.
 
 \screenshotH{assets/users/transfer_project.png}{Transferring Projects to Group}{transfer_project}
+
+\subsubsection{Administrator Access}
+Despite the move to LDAP, the local \texttt{root} account was intentionally retained. This serves as a "break-glass" mechanism, ensuring that administrative access to the GitLab server is maintained even if the LDAP service becomes unreachable or misconfigured. Standard users, however, are forced to use LDAP.
+
+\screenshotH{assets/users/root_login.png}{Local Root Login (Fallback)}{root_login}
 
 \subsection{User Onboarding and Management}
 Once the LDAP connection is established, users can be managed directly through GitLab's interface using their LDAP identities.
