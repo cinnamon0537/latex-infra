@@ -378,7 +378,7 @@ A dedicated EC2 instance was created in AWS:
 \subsubsection*{Reasoning}
 LDAP is a core infrastructure service. It should run independently of the GitLab server and be administrable separately to reflect a realistic cloud architecture.
 
-\placeholderfig{LDAP Instance in AWS Console}{ldap_instance}
+\screenshotH{assets/ldap/ldap_instance.png}{LDAP EC2 Instance in AWS}{ldap_instance}
 
 \subsection{Connection and Installation}
 After starting the instance, an SSH connection was established (\texttt{ssh ubuntu@<ldap-private-ip>}), followed by switching to the root user.
@@ -431,8 +431,6 @@ uid: benji
 ...
 \end{verbatim}
 
-\placeholderfig{LDAP User Verification via ldapwhoami}{ldap_user_check}
-
 \subsection{GitLab LDAP Integration}
 GitLab was configured to authenticate against this LDAP server. The configuration in \texttt{/etc/gitlab/gitlab.rb} enabled LDAP and defined the connection details:
 
@@ -463,7 +461,9 @@ GitLab does not authenticate users itself but checks credentials against LDAP. U
     \item Separation of infrastructure and application is achieved.
 \end{itemize}
 
-\placeholderfig{GitLab Login Screen with LDAP Options}{gitlab_login_ldap}
+\screenshotH{assets/ldap/ldap_sg.png}{LDAP Security Group Configuration}{ldap_sg}
+\screenshotH{assets/users/allusers.png}{User Overview in GitLab showing LDAP users}{gitlab_users}
+\screenshotH{assets/users/overview_group_members.png}{Group Members with LDAP Accounts}{gitlab_group_members}
 
 \section{CI/CD Pipeline Setup}
 
@@ -515,8 +515,7 @@ The pipeline is divided into clear stages to ensure fast feedback.
     \item \textbf{Production:} Pushes to the \texttt{main} branch trigger the pipeline and tag the image as \texttt{\$DOCKER\_IMAGE:latest}.
 \end{itemize}
 
-\placeholderfig{Pipeline Visualization in GitLab}{pipeline_viz}
-\placeholderfig{Pipeline Execution Logs}{pipeline_logs}
+\screenshotH{assets/cicd/tokens.png}{CI/CD Variables and Security Tokens}{cicd_tokens}
 
 \section{Cost Estimation}
 An estimation of the cloud infrastructure costs for one year was performed using the AWS Pricing Calculator.
@@ -527,7 +526,5 @@ An estimation of the cloud infrastructure costs for one year was performed using
     \item \textbf{Network Traffic:} [Cost]
     \item \textbf{Total Estimated Cost (1 Year):} [Total]
 \end{itemize}
-
-\placeholderfig{AWS Pricing Calculator Summary}{aws_cost}
 
 \end{document}
