@@ -528,6 +528,16 @@ After a user logs in or is added to a group, they appear in the GitLab user mana
 \subsection{Objective}
 The objective was to set up a CI/CD pipeline for a software project that runs on the deployed infrastructure, enabling automated linting, testing, building, and deployment.
 
+\subsection{Infrastructure Adjustments}
+To ensure consistent access for developers, an AWS Elastic IP was assigned to the GitLab instance. This static IP prevents address changes upon server restarts, removing the need to constantly update remote URLs on local machines.
+
+\screenshotH{assets/cicd/elastic_gitlab.png}{Elastic IP Configuration for GitLab}{elastic_ip}
+
+\subsection{Developer Access}
+Developers access the repositories via HTTP. Since SSH keys were not distributed for all users, they authenticate securely using their username and password for each clone or push operation.
+
+\screenshotH{assets/cicd/git_clone.png}{Git Clone via HTTP}{git_clone}
+
 \subsection{Pipeline Decisions \& Tools}
 \begin{itemize}
     \item \textbf{CI/CD Platform:} GitLab CI/CD (Self-hosted).
@@ -560,6 +570,8 @@ The pipeline is divided into clear stages to ensure fast feedback.
     \item \textbf{Deploy:} Pushes the Docker image to the registry.
 \end{enumerate}
 
+\screenshotH{assets/cicd/deploy_to_docker.png}{Pipeline Stages Visualization}{pipeline_stages}
+
 \subsection{Environment \& Configuration}
 \begin{itemize}
     \item \textbf{Base Image:} \texttt{python:3.12-slim} is used for Lint and Test stages. It is lightweight and matches the development runtime.
@@ -567,22 +579,45 @@ The pipeline is divided into clear stages to ensure fast feedback.
     \item \textbf{Docker-in-Docker (dind):} We use the \texttt{docker:27-dind} service and \texttt{docker:27} image for the Build and Deploy stages to allow the runner to build and push Docker images from within the CI environment.
 \end{itemize}
 
-\subsection{Branching Strategy}
+\subsubsection{Variables and Security}
+Authentication with Docker Hub is handled securely via GitLab CI/CD Variables. Instead of using the primary account password, a dedicated Personal Access Token is utilized. This approach aligns with security best practices for several reasons:
 \begin{itemize}
-    \item \textbf{Development:} Pushes to the \texttt{develop} branch trigger the pipeline and tag the image as \texttt{\$DOCKER\_IMAGE:develop}.
-    \item \textbf{Production:} Pushes to the \texttt{main} branch trigger the pipeline and tag the image as \texttt{\$DOCKER\_IMAGE:latest}.
+    \item \textbf{Revocability:} The token can be revoked independently without changing the main account password, which is crucial if the CI/CD environment is compromised.
+    \item \textbf{Least Privilege:} Tokens can be scoped to specific actions (e.g., Read/Write access to repositories) rather than granting full administrative control.
+    \item \textbf{Isolation:} It separates automated access from human user credentials.
 \end{itemize}
 
-\screenshotH{assets/cicd/tokens.png}{CI/CD Variables and Security Tokens}{cicd_tokens}
+\screenshotH{assets/cicd/tokens.png}{CI/CD Variables}{cicd_tokens}
+\screenshotH{assets/cicd/docker_token.png}{Docker Hub Access Token}{docker_token}
+
+\subsection{Branching Strategy}
+The branching strategy enforces a clear separation between development and production code.
+\begin{itemize}
+    \item \textbf{Development:} Pushes to \texttt{develop} trigger the pipeline and tag images with \texttt{:develop}.
+    \item \textbf{Production:} Merging \texttt{develop} into \texttt{main} via a Merge Request triggers the production pipeline, tagging images with \texttt{:latest}.
+\end{itemize}
+
+\screenshotH{assets/cicd/merge_dev_to_main.png}{Merge Request from Develop to Main}{merge_request}
+
+\subsection{Deployment Results}
+The final artifact of the pipeline is a Docker image stored in the Docker Hub registry. The registry contains tagged images for both the development snapshots and the stable releases.
+
+\screenshotH{assets/cicd/dockerhub_images_test_runner.png}{Docker Hub Image Registry}{dockerhub_images}
 
 \section{Cost Estimation}
-An estimation of the cloud infrastructure costs for one year was performed using the AWS Pricing Calculator.
+An attempt was made to perform a precise cost estimation using the AWS Cost Explorer and Pricing Calculator. However, due to restrictions on the student AWS account ('Access Denied'), it was not possible to access the live cost data or the official calculator integration directly.
+
+\screenshotH{assets/cost/cost_estimation.png}{Access Denied in AWS Cost Management}{aws_cost_denied}
+
+\subsection{AI-Based Prediction}
+To provide a reasonable cost estimate despite these restrictions, we consulted three different AI models: ChatGPT (OpenAI), Claude (Anthropic), and Gemini (Google). Based on the architecture (4 EC2 t3.micro/t3.medium instances, gp3 storage, Load Balancer, and Traffic), the consensus prediction for the annual cost is as follows:
 
 \begin{itemize}
-    \item \textbf{EC2 Instances:} [Cost]
-    \item \textbf{Storage (EBS):} [Cost]
-    \item \textbf{Network Traffic:} [Cost]
-    \item \textbf{Total Estimated Cost (1 Year):} [Total]
+    \item \textbf{Infrastructure (EC2 + EBS):} $\approx$ \$400 - \$500 / year
+    \item \textbf{Network \& Others:} $\approx$ \$50 - \$100 / year
+    \item \textbf{Total Estimated Cost:} $\approx$ \$450 - \$600 / year
 \end{itemize}
+
+This estimate assumes standard on-demand pricing without reserved instances.
 
 \end{document}
