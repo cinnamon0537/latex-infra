@@ -366,7 +366,7 @@ After the push, the new file is visible in the repository, and the CI/CD pipelin
 The goal was to implement a central user management system using LDAP for GitLab, enabling users to log in to GitLab via LDAP instead of being maintained locally. Local GitLab users should no longer be necessary, ensuring a centralized authentication source.
 
 \subsection{LDAP EC2 Instance Creation}
-\subsubsection*{Implementation}
+\subsubsection{Implementation}
 A dedicated EC2 instance was created in AWS:
 \begin{itemize}
     \item \textbf{Name:} ldap.ci.intern
@@ -375,7 +375,7 @@ A dedicated EC2 instance was created in AWS:
     \item \textbf{Security Group:} Separate security group, operating within the same VPC as GitLab.
 \end{itemize}
 
-\subsubsection*{Reasoning}
+\subsubsection{Reasoning}
 LDAP is a core infrastructure service. It should run independently of the GitLab server and be administrable separately to reflect a realistic cloud architecture.
 
 \screenshotH{assets/ldap/ldap_instance.png}{LDAP EC2 Instance in AWS}{ldap_instance}
@@ -393,7 +393,7 @@ To ensure the security of the user directory, a dedicated Security Group was con
 \subsection{Connection and Installation}
 After starting the instance, an SSH connection was established (\texttt{ssh ubuntu@<ldap-private-ip>}), followed by switching to the root user.
 
-\subsubsection*{Installation of OpenLDAP}
+\subsubsection{Installation of OpenLDAP}
 OpenLDAP was installed using the following commands:
 \begin{lstlisting}[language=bash]
 apt update
@@ -402,7 +402,7 @@ apt install slapd ldap-utils -y
 
 During installation, the LDAP admin password was set, and the base domain was configured as \texttt{ci.intern}, resulting in the Base DN \texttt{dc=ci,dc=intern}.
 
-\subsubsection*{Reasoning}
+\subsubsection{Reasoning}
 \texttt{slapd} is the LDAP server daemon, and \texttt{ldap-utils} provides necessary management tools like \texttt{ldapadd} and \texttt{ldapsearch}.
 
 \subsection{Base Structure Configuration}
@@ -460,18 +460,18 @@ gitlab_rails['ldap_servers'] = {
 }
 \end{lstlisting}
 
-\subsubsection*{Reasoning}
+\subsubsection{Reasoning}
 GitLab does not authenticate users itself but checks credentials against LDAP. Upon the first successful login, GitLab automatically creates an internal account linked to the LDAP identity.
 
 \subsection{GitLab Configuration Adjustments}
 With the introduction of LDAP, several adjustments were made to the GitLab configuration to ensure a secure and consistent workflow.
 
-\subsubsection*{Disabling Local Sign-up}
+\subsubsection{Disabling Local Sign-up}
 To enforce the use of the central LDAP directory, the option for local sign-ups was disabled. Users cannot register themselves; they must exist in the LDAP directory to log in.
 
 \screenshotH{assets/users/restrict_sign_up.png}{Restricted Sign-up Configuration}{restrict_signup}
 
-\subsubsection*{Project Transfer}
+\subsubsection{Project Transfer}
 Projects that were previously created by local users or the administrator were transferred to the new Group structure. This ensures that the newly invited LDAP users have immediate access to the codebase.
 
 \screenshotH{assets/users/transfer_project.png}{Transferring Projects to Group}{transfer_project}
@@ -479,16 +479,29 @@ Projects that were previously created by local users or the administrator were t
 \subsection{User Onboarding and Management}
 Once the LDAP connection is established, users can be managed directly through GitLab's interface using their LDAP identities.
 
-\subsubsection*{Inviting Users}
+\subsubsection{Group Configuration}
+A central group named \texttt{devops-cloud-10} was created to facilitate project management. All relevant projects and members are organized within this group.
+
+\screenshotH{assets/users/group.png}{DevOps Cloud 10 Group}{group_overview}
+
+\subsubsection{Inviting Users}
 Users do not need to be manually created in GitLab. Instead, they can be invited to Groups or Projects directly. When adding a new member, GitLab queries the connected LDAP server. This allows searching for users by their Name or UID (e.g., "benji") and assigning them permissions (e.g., Developer) before they have even logged in for the first time.
 
 \screenshotH{assets/ldap/invite_users.png}{Inviting Users via LDAP Search}{invite_users}
 
-\subsubsection*{User Display in GitLab}
+After the user is invited to the group, they can be managed directly through GitLab's interface using their LDAP identities.
+
+\screenshotH{assets/users/invited_manage_group.png}{Managing Group Members}{manage_group}
+
+\subsubsection{First Login}
+GitLab accounts for LDAP users are not created until the first successful login. Users select the "LDAP" tab on the login screen and authenticate with their directory credentials. Upon success, a GitLab user record is automatically generated and linked to the LDAP entry.
+
+\screenshotH{assets/users/gitlab_ldap_login.png}{LDAP Login Screen}{ldap_login}
+
+\subsubsection{User Display in GitLab}
 After a user logs in or is added to a group, they appear in the GitLab user management area. A distinctive feature is the "LDAP" badge next to their profile, indicating that their credentials and identity are managed externally. Local password management for these users is disabled to strictly enforce the centralized authentication policy.
 
 \screenshotH{assets/users/allusers.png}{User Overview in GitLab showing LDAP users}{gitlab_users}
-\screenshotH{assets/users/overview_group_members.png}{Group Members with LDAP Accounts}{gitlab_group_members}
 
 \subsection{Result}
 \begin{itemize}
