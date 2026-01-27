@@ -643,19 +643,25 @@ The final artifact of the pipeline is a Docker image stored in the Docker Hub re
 \screenshotH{assets/cicd/dockerhub_images_test_runner.png}{Docker Hub Image Registry}{dockerhub_images}
 
 \section{Cost Estimation}
-An attempt was made to perform a precise cost estimation using the AWS Cost Explorer and Pricing Calculator. However, due to restrictions on the student AWS account ('Access Denied'), it was not possible to access the live cost data or the official calculator integration directly.
+
+\subsection{Live Data Challenges}
+An attempt was made to perform a precise cost estimation using the AWS Cost Explorer and Pricing Calculator integration directly from the account. However, due to restrictions on the student AWS account ("Access Denied"), it was not possible to access live cost data.
 
 \screenshotH{assets/cost/cost_estimation.png}{Access Denied in AWS Cost Management}{aws_cost_denied}
 
-\subsection{AI-Based Prediction}
-To provide a reasonable cost estimate despite these restrictions, we consulted three different AI models: ChatGPT (OpenAI), Claude (Anthropic), and Gemini (Google). Based on the architecture (4 EC2 t3.micro/t3.medium instances, gp3 storage, Load Balancer, and Traffic), the consensus prediction for the annual cost is as follows:
-
+\subsection{Manual Calculation}
+To obtain an accurate estimate, a manual calculation was performed using the public AWS Pricing Calculator. The calculation includes:
 \begin{itemize}
-    \item \textbf{Infrastructure (EC2 + EBS):} $\approx$ \$400 - \$500 / year
-    \item \textbf{Network \& Others:} $\approx$ \$50 - \$100 / year
-    \item \textbf{Total Estimated Cost:} $\approx$ \$450 - \$600 / year
+    \item 4x \texttt{t3.micro} instances (LDAP, Primary DNS, Secondary DNS, Runner)
+    \item 1x \texttt{t3.medium} instance (GitLab Server)
+    \item VPC and Network Traffic
 \end{itemize}
 
-This estimate assumes standard on-demand pricing without reserved instances.
+\textbf{Calculated Yearly Cost:} \textbf{\$362.64}
+
+\screenshotH{assets/cost/cost_estimate.png}{Manual Calculation Result}{cost_manual}
+
+\subsection{AI-Based Validation}
+We compared this result with predictions from AI models (ChatGPT, Claude, Gemini). The AI consensus estimate ($\approx$ \$400 - \$500) was slightly conservative, overestimating the cost compared to the manual calculation. This confirms that the project remains well within a budget-friendly range for educational purposes.
 
 \end{document}
