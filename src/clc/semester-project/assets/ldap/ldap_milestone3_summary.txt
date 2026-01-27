@@ -1,0 +1,75 @@
+LDAP SETUP – ZUSAMMENFASSUNG (Milestone 3 Kontext)
+
+ZIEL
+Das Ziel war die Implementierung einer zentralen Benutzerverwaltung mittels LDAP für GitLab,
+sodass Benutzer nicht lokal in GitLab gepflegt werden müssen, sondern sich über einen LDAP-
+Server authentifizieren.
+
+ARCHITEKTUR
+- Eigener LDAP Server (EC2)
+- Eigener GitLab Server (EC2)
+- GitLab authentifiziert Benutzer über LDAP (Port 389)
+- Benutzerverwaltung erfolgt zentral über LDAP
+
+AWS SETUP
+LDAP Instanz:
+- Name: ldap.ci.intern
+- OS: Ubuntu Server 22.04 LTS
+- Instance Type: t3.micro
+
+Security Group:
+- Port 22 (SSH): eigene IP
+- Port 389 (LDAP): nur GitLab Security Group
+
+LDAP STRUKTUR
+Base DN:
+dc=ci,dc=intern
+
+Organisation:
+o=ci
+
+User OU:
+ou=people,dc=ci,dc=intern
+
+Beispiel Benutzer:
+uid=benji,ou=people,dc=ci,dc=intern
+uid=luka,ou=people,dc=ci,dc=intern
+
+LDAP ADMIN
+Der LDAP Admin (cn=admin,dc=ci,dc=intern) dient ausschließlich zur technischen Bind-
+Authentifizierung zwischen GitLab und LDAP.
+
+Dieser Account ist NICHT für den GitLab Web Login gedacht.
+
+GITLAB LDAP INTEGRATION
+- GitLab leitet Login-Daten an LDAP weiter
+- LDAP prüft Benutzername und Passwort
+- Bei erfolgreichem Login wird der Benutzer automatisch in GitLab angelegt
+- GitLab speichert kein Passwort
+
+LDAP USER IN GITLAB
+LDAP Benutzer sind in GitLab als „LDAP“ markiert.
+Sie besitzen kein lokales GitLab Passwort.
+
+DOPPELTE USER
+Anfangs existierten sowohl lokale GitLab Benutzer als auch LDAP Benutzer.
+Diese doppelten lokalen Benutzer wurden gelöscht.
+
+Finaler Zustand:
+- Lokaler GitLab Root (Administrator)
+- LDAP Benutzer für alle Entwickler
+
+GRUPPEN UND PROJEKTE
+- Gruppe: devops-cloud-10
+- LDAP Benutzer als Developer hinzugefügt
+- Administrator als Owner
+
+ERGEBNIS
+- Zentrale Benutzerverwaltung
+- LDAP Login funktioniert
+- Keine lokalen Benutzer notwendig
+- Architektur entspricht Best Practice
+
+STATUS
+Alle Anforderungen für Milestone 3 im Bereich Authentifizierung und Benutzerverwaltung
+sind erfüllt.
