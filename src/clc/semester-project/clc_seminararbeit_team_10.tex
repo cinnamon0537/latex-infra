@@ -560,6 +560,44 @@ Developers access the repositories via HTTP. Since SSH keys were not distributed
         \end{itemize}
 \end{itemize}
 
+\subsection{Unit Testing Implementation}
+Automated tests are executed using \textbf{Pytest} to ensure the correctness of the LaTeX Compile Service.
+
+\subsubsection{Configuration}
+\begin{itemize}
+    \item \textbf{Framework:} Pytest (Version 9.0.2)
+    \item \textbf{Test Files:} \texttt{test\_health.py} and \texttt{test\_compile.py}
+    \item \textbf{Command:} \texttt{pytest -q} (quiet mode for cleaner CI logs)
+\end{itemize}
+
+\subsubsection{Implemented Test Cases}
+The test suite covers the critical paths of the application:
+
+\textbf{1. Health Check Endpoint (\texttt{test\_health.py}):}
+\begin{itemize}
+    \item Tests the \texttt{/health} endpoint.
+    \item Verifies that the service responds with Status \texttt{200}.
+    \item Checks that the JSON response contains \texttt{\{"status": "ok"\}}.
+\end{itemize}
+
+\textbf{2. PDF Compilation (\texttt{test\_compile.py}):}
+\begin{itemize}
+    \item Tests the \texttt{/compile} endpoint with a minimal LaTeX file.
+    \item Mocks the \texttt{compile\_latex\_to\_pdf} function to ensure deterministic testing.
+    \item Validates that the response:
+    \begin{itemize}
+        \item Returns Status code \texttt{200}.
+        \item Has Content-Type \texttt{application/pdf}.
+        \item Starts with the PDF magic bytes \texttt{\%PDF}.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Requirements Fulfillment}
+The project requirements stated "at least three different unit tests". This is achieved through the two test files and multiple assertions (Health Check: 2 Assertions, Compile Check: 3 Assertions).
+
+\subsubsection{Pipeline Behavior}
+If any test fails, the pipeline prevents the artifact from progressing to the Build or Deploy stages. This "fail-fast" mechanism ensures immediate feedback on regressions.
+
 \subsection{Pipeline Stages}
 The pipeline is divided into clear stages to ensure fast feedback.
 
