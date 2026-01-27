@@ -357,4 +357,177 @@ After the push, the new file is visible in the repository, and the CI/CD pipelin
 
 \screenshotH{assets/instances/gitlab/repo_after_push.png}{Repository after Push}{repo_after_push}
 
+% ============================================================================
+\chapter{Milestone 3}
+
+\section{LDAP Setup – Technical Documentation}
+
+\subsection{Goal}
+The goal was to implement a central user management system using LDAP for GitLab, enabling users to log in to GitLab via LDAP instead of being maintained locally. Local GitLab users should no longer be necessary, ensuring a centralized authentication source.
+
+\subsection{LDAP EC2 Instance Creation}
+\subsubsection*{Implementation}
+A dedicated EC2 instance was created in AWS:
+\begin{itemize}
+    \item \textbf{Name:} ldap.ci.intern
+    \item \textbf{AMI:} Ubuntu Server 22.04 LTS
+    \item \textbf{Instance Type:} t3.micro
+    \item \textbf{Security Group:} Separate security group, operating within the same VPC as GitLab.
+\end{itemize}
+
+\subsubsection*{Reasoning}
+LDAP is a core infrastructure service. It should run independently of the GitLab server and be administrable separately to reflect a realistic cloud architecture.
+
+\placeholderfig{LDAP Instance in AWS Console}{ldap_instance}
+
+\subsection{Connection and Installation}
+After starting the instance, an SSH connection was established (\texttt{ssh ubuntu@<ldap-private-ip>}), followed by switching to the root user.
+
+\subsubsection*{Installation of OpenLDAP}
+OpenLDAP was installed using the following commands:
+\begin{lstlisting}[language=bash]
+apt update
+apt install slapd ldap-utils -y
+\end{lstlisting}
+
+During installation, the LDAP admin password was set, and the base domain was configured as \texttt{ci.intern}, resulting in the Base DN \texttt{dc=ci,dc=intern}.
+
+\subsubsection*{Reasoning}
+\texttt{slapd} is the LDAP server daemon, and \texttt{ldap-utils} provides necessary management tools like \texttt{ldapadd} and \texttt{ldapsearch}.
+
+\subsection{Base Structure Configuration}
+An initial structure was defined in a \texttt{base.ldif} file to establish the root domain and separate Organizational Units (OUs) for Users and Groups. This structure is essential for GitLab's integration.
+
+\begin{lstlisting}
+dn: dc=ci,dc=intern
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: CI Intern
+dc: ci
+
+dn: ou=users,dc=ci,dc=intern
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=groups,dc=ci,dc=intern
+objectClass: organizationalUnit
+ou: groups
+\end{lstlisting}
+
+This structure was applied using \texttt{ldapadd}.
+
+\subsection{User Creation}
+Users are managed centrally in LDAP. Passwords were generated using \texttt{slappasswd} (producing an SSHA hash) and users were defined in LDIF files (e.g., \texttt{benji.ldif}) with attributes like \texttt{uid}, \texttt{cn}, \texttt{sn}, and \texttt{userPassword}.
+
+\textbf{Example User:}
+\begin{verbatim}
+dn: uid=benji,ou=users,dc=ci,dc=intern
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: Benji Feichtlbauer
+uid: benji
+...
+\end{verbatim}
+
+\placeholderfig{LDAP User Verification via ldapwhoami}{ldap_user_check}
+
+\subsection{GitLab LDAP Integration}
+GitLab was configured to authenticate against this LDAP server. The configuration in \texttt{/etc/gitlab/gitlab.rb} enabled LDAP and defined the connection details:
+
+\begin{lstlisting}[language=ruby]
+gitlab_rails['ldap_enabled'] = true
+gitlab_rails['ldap_servers'] = {
+  'main' => {
+    'label' => 'LDAP',
+    'host' => 'ldap.ci.intern',
+    'port' => 389,
+    'uid' => 'uid',
+    'bind_dn' => 'cn=admin,dc=ci,dc=intern',
+    'password' => 'LDAP_ADMIN_PASSWORD',
+    'encryption' => 'plain',
+    'base' => 'dc=ci,dc=intern'
+  }
+}
+\end{lstlisting}
+
+\subsubsection*{Reasoning}
+GitLab does not authenticate users itself but checks credentials against LDAP. Upon the first successful login, GitLab automatically creates an internal account linked to the LDAP identity.
+
+\subsection{Result}
+\begin{itemize}
+    \item Centralized LDAP server is operational.
+    \item GitLab authentication works via LDAP.
+    \item No local developer accounts are needed on GitLab.
+    \item Separation of infrastructure and application is achieved.
+\end{itemize}
+
+\placeholderfig{GitLab Login Screen with LDAP Options}{gitlab_login_ldap}
+
+\section{CI/CD Pipeline Setup}
+
+\subsection{Objective}
+The objective was to set up a CI/CD pipeline for a software project that runs on the deployed infrastructure, enabling automated linting, testing, building, and deployment.
+
+\subsection{Pipeline Decisions \& Tools}
+\begin{itemize}
+    \item \textbf{CI/CD Platform:} GitLab CI/CD (Self-hosted).
+    \item \textbf{Execution:} Self-hosted GitLab Runner with \textbf{Docker Executor}.
+        \begin{itemize}
+            \item \textbf{Reasoning:} The Docker executor ensures that every job runs in a fresh, clean, and reproducible container, avoiding "works on my machine" issues.
+        \end{itemize}
+    \item \textbf{Linting Tool:} \textbf{Ruff}.
+        \begin{itemize}
+            \item \textbf{Reasoning:} Ruff is extremely fast and covers both linting and formatting checks. Added to the CI to "fail fast" if code quality or style standards are not met.
+        \end{itemize}
+    \item \textbf{Unit Tests:} \textbf{Pytest}.
+        \begin{itemize}
+            \item \textbf{Reasoning:} Standard test runner for Python with clear exit codes. The pipeline fails automatically if tests fail.
+        \end{itemize}
+    \item \textbf{Containerization:} Docker (built from Dockerfile). Deployment as a container image is standardized and portable.
+    \item \textbf{Container Registry:} \textbf{Docker Hub}.
+        \begin{itemize}
+            \item \textbf{Reasoning:} Publicly accessible, easy to integrate. Authentication is handled via GitLab CI/CD variables (\texttt{DOCKERHUB\_USERNAME}, \texttt{DOCKERHUB\_TOKEN}).
+        \end{itemize}
+\end{itemize}
+
+\subsection{Pipeline Stages}
+The pipeline is divided into clear stages to ensure fast feedback.
+
+\begin{enumerate}
+    \item \textbf{Lint:} Static code analysis using Ruff.
+    \item \textbf{Test:} Unit tests using Pytest.
+    \item \textbf{Build:} Builds the Docker image.
+    \item \textbf{Deploy:} Pushes the Docker image to the registry.
+\end{enumerate}
+
+\subsection{Environment \& Configuration}
+\begin{itemize}
+    \item \textbf{Base Image:} \texttt{python:3.12-slim} is used for Lint and Test stages. It is lightweight and matches the development runtime.
+    \item \textbf{Dependencies:} Installed via \texttt{pip install -r requirements.txt} in each job to ensure a clean environment without hidden local packages.
+    \item \textbf{Docker-in-Docker (dind):} We use the \texttt{docker:27-dind} service and \texttt{docker:27} image for the Build and Deploy stages to allow the runner to build and push Docker images from within the CI environment.
+\end{itemize}
+
+\subsection{Branching Strategy}
+\begin{itemize}
+    \item \textbf{Development:} Pushes to the \texttt{develop} branch trigger the pipeline and tag the image as \texttt{\$DOCKER\_IMAGE:develop}.
+    \item \textbf{Production:} Pushes to the \texttt{main} branch trigger the pipeline and tag the image as \texttt{\$DOCKER\_IMAGE:latest}.
+\end{itemize}
+
+\placeholderfig{Pipeline Visualization in GitLab}{pipeline_viz}
+\placeholderfig{Pipeline Execution Logs}{pipeline_logs}
+
+\section{Cost Estimation}
+An estimation of the cloud infrastructure costs for one year was performed using the AWS Pricing Calculator.
+
+\begin{itemize}
+    \item \textbf{EC2 Instances:} [Cost]
+    \item \textbf{Storage (EBS):} [Cost]
+    \item \textbf{Network Traffic:} [Cost]
+    \item \textbf{Total Estimated Cost (1 Year):} [Total]
+\end{itemize}
+
+\placeholderfig{AWS Pricing Calculator Summary}{aws_cost}
+
 \end{document}
