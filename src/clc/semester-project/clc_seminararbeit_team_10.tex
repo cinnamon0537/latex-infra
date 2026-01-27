@@ -463,6 +463,19 @@ gitlab_rails['ldap_servers'] = {
 \subsubsection*{Reasoning}
 GitLab does not authenticate users itself but checks credentials against LDAP. Upon the first successful login, GitLab automatically creates an internal account linked to the LDAP identity.
 
+\subsection{GitLab Configuration Adjustments}
+With the introduction of LDAP, several adjustments were made to the GitLab configuration to ensure a secure and consistent workflow.
+
+\subsubsection*{Disabling Local Sign-up}
+To enforce the use of the central LDAP directory, the option for local sign-ups was disabled. Users cannot register themselves; they must exist in the LDAP directory to log in.
+
+\screenshotH{assets/users/restrict_sign_up.png}{Restricted Sign-up Configuration}{restrict_signup}
+
+\subsubsection*{Project Transfer}
+Projects that were previously created by local users or the administrator were transferred to the new Group structure. This ensures that the newly invited LDAP users have immediate access to the codebase.
+
+\screenshotH{assets/users/transfer_project.png}{Transferring Projects to Group}{transfer_project}
+
 \subsection{User Onboarding and Management}
 Once the LDAP connection is established, users can be managed directly through GitLab's interface using their LDAP identities.
 
